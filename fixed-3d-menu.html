@@ -1,0 +1,8432 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fff1f4">
+  <title>For Chiboo — Strawberry × Matcha</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
+
+    :root {
+      --pink: #f3a8b8;
+      --rose: #bd637b;
+      --green: #91aa78;
+      --cream: #fffaf3;
+      --ink: #493b3b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 520px;
+      overflow: hidden;
+      isolation: isolate;
+      perspective: 1000px;
+      background:
+        radial-gradient(ellipse at 15% 15%, rgba(255,173,190,.7), transparent 40%),
+        radial-gradient(ellipse at 85% 85%, rgba(170,202,145,.7), transparent 45%),
+        linear-gradient(135deg, #fffaf7, #fff1f4 55%, #f1f7e9);
+    }
+
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      opacity: .13;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+    }
+
+    .glow {
+      position: absolute;
+      width: 50vw;
+      height: 50vw;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .45;
+      pointer-events: none;
+    }
+
+    .glow-pink {
+      top: -22%;
+      left: -20%;
+      background: #f7a9bb;
+    }
+
+    .glow-green {
+      right: -22%;
+      bottom: -25%;
+      background: #a2bf88;
+    }
+
+    .background-title {
+      position: absolute;
+      z-index: 1;
+      top: 11%;
+      left: 50%;
+      width: 100%;
+      padding: 0 10px;
+      text-align: center;
+      transform: translate(-50%, 30px) scale(1.2);
+      filter: blur(12px);
+      opacity: 0;
+      transition: opacity 1.5s ease, filter 2s ease, transform 2s ease;
+      color: rgba(117, 75, 85, .27);
+      pointer-events: none;
+    }
+
+    .background-title.show {
+      opacity: 1;
+      filter: blur(4px);
+      transform: translate(-50%, 0) scale(1);
+    }
+
+    .background-title small {
+      display: block;
+      font-size: 10px;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+    }
+
+    .background-title h1 {
+      margin: 12px 0;
+      font: italic clamp(40px, 9vw, 92px)/1.05 'Playfair Display', serif;
+      font-weight: 500;
+    }
+
+    .decor {
+      position: absolute;
+      z-index: 2;
+      width: 42px;
+      opacity: 0;
+      filter: drop-shadow(0 12px 10px rgba(100,70,70,.1));
+      transition: opacity 1.5s ease;
+      pointer-events: none;
+    }
+
+    .decor img {
+      width: 100%;
+      display: block;
+    }
+
+    .decor.visible {
+      opacity: .75;
+      animation: decorFloat 5s ease-in-out infinite alternate;
+    }
+
+    .decor-a {
+      top: 23%;
+      left: 10%;
+      width: 40px;
+      rotate: -16deg;
+    }
+
+    .decor-b {
+      top: 30%;
+      right: 12%;
+      width: 32px;
+      animation-delay: -2s;
+    }
+
+    .decor-c {
+      bottom: 15%;
+      left: 16%;
+      width: 45px;
+      animation-delay: -3s;
+    }
+
+    .decor-d {
+      bottom: 22%;
+      right: 12%;
+      width: 30px;
+      animation-delay: -1s;
+    }
+
+    .world {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      transform-style: preserve-3d;
+      transform: translateZ(-100px) scale(.9);
+      transition: transform 1.8s cubic-bezier(.2,.8,.15,1);
+    }
+
+    .world.camera-arrive {
+      animation: cameraMove 3.2s cubic-bezier(.2,.7,.15,1) both;
+    }
+
+    .couple {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 10;
+      width: clamp(90px, 22vw, 170px);
+      aspect-ratio: 1;
+      transform-style: preserve-3d;
+      opacity: 0;
+      transform: translate(-50%, -50%) translateZ(-1200px) scale(.08) rotate(-18deg);
+      filter: drop-shadow(0 30px 25px rgba(65,40,50,0));
+      pointer-events: none;
+    }
+
+    .couple img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .couple.travel {
+      animation: coupleJourney 4s cubic-bezier(.16,.72,.18,1) forwards;
+    }
+
+    .couple.rest {
+      animation: coupleRest 1.1s ease-out forwards;
+    }
+
+    /* Amplop utama */
+    .envelope {
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      z-index: 8;
+      width: min(78vw, 430px);
+      height: min(51vw, 275px);
+      min-height: 190px;
+      transform-style: preserve-3d;
+      transform: translate(-50%, -50%) translateZ(-700px) scale(.35) rotateX(22deg);
+      opacity: 0;
+      filter: drop-shadow(0 35px 28px rgba(91,55,68,.23));
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .envelope.arrive {
+      animation: envelopeJourney 2.3s 2.2s cubic-bezier(.16,.75,.2,1) forwards;
+    }
+
+    .envelope:focus-visible {
+      outline: 2px solid #9c6173;
+      outline-offset: 8px;
+    }
+
+    /* Bagian belakang amplop */
+    .envelope-back {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: linear-gradient(140deg, #f8dfe0, #f0c2cb 65%, #e9b2bf);
+      box-shadow:
+        inset 0 2px 3px rgba(255,255,255,.8),
+        inset 0 -8px 16px rgba(165,87,107,.08);
+    }
+
+    /* Surat */
+    .letter {
+      position: absolute;
+      z-index: 2;
+      top: 8%;
+      left: 9%;
+      right: 9%;
+      height: 84%;
+      border-radius: 8px;
+      padding: 23px 12px;
+      text-align: center;
+      background: #fffdf8;
+      box-shadow: 0 5px 20px rgba(100,60,70,.1);
+      transform: translateY(8%) translateZ(-8px);
+      transition: transform 1.4s cubic-bezier(.22,.8,.2,1);
+    }
+
+    .letter small {
+      font-size: 9px;
+      letter-spacing: .2em;
+      color: #a37c80;
+      text-transform: uppercase;
+    }
+
+    .letter h2 {
+      margin: 13px 0 8px;
+      font: italic clamp(23px, 5vw, 35px)/1.1 'Playfair Display', serif;
+      color: #a85b70;
+    }
+
+    .letter p {
+      margin: 0;
+      color: #887774;
+      font-size: 11px;
+    }
+
+    /* Lipatan depan bawah */
+    .envelope-front {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f4c7d0, #e9aebb);
+      clip-path: polygon(0 100%, 0 0, 50% 55%, 100% 0, 100% 100%);
+      pointer-events: none;
+    }
+
+    /* Tutup amplop */
+    .flap {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      transform-origin: 50% 0%;
+      transform: rotateX(0);
+      transform-style: preserve-3d;
+      transition: transform 1.1s cubic-bezier(.2,.7,.15,1);
+      pointer-events: none;
+    }
+
+    .flap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, #fbe6e4, #edbac4);
+      clip-path: polygon(0 0, 100% 0, 50% 66%);
+      filter: drop-shadow(0 6px 8px rgba(100,55,65,.12));
+      backface-visibility: hidden;
+    }
+
+    /* Segel lilin */
+    .seal {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      z-index: 7;
+      width: clamp(48px, 11vw, 72px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%) scale(0);
+      color: #ffedf0;
+      font: 28px 'Playfair Display', serif;
+      background: radial-gradient(circle at 30% 25%, #d98b9d, #a74760 65%, #81364f);
+      border: 2px solid rgba(255,255,255,.4);
+      box-shadow:
+        inset 0 2px 5px rgba(255,255,255,.4),
+        inset 0 -5px 8px rgba(70,20,40,.2),
+        0 8px 17px rgba(90,40,60,.25);
+      transition: transform .45s ease, opacity .45s ease;
+      pointer-events: none;
+    }
+
+    .seal.pop {
+      animation: sealAppear .75s cubic-bezier(.2,1.5,.4,1) forwards;
+    }
+
+    .instruction {
+      position: absolute;
+      z-index: 12;
+      top: calc(52% + min(31vw, 170px));
+      left: 50%;
+      width: max-content;
+      max-width: 90%;
+      text-align: center;
+      transform: translateX(-50%);
+      opacity: 0;
+      color: #8b6870;
+      font-size: 12px;
+      letter-spacing: .08em;
+      transition: opacity .8s ease;
+      pointer-events: none;
+    }
+
+    .instruction.show {
+      opacity: 1;
+    }
+
+    .instruction span {
+      display: inline-block;
+      margin-left: 5px;
+      animation: heartPulse 1.5s infinite ease-in-out;
+    }
+
+    /* Kondisi setelah amplop dibuka */
+.scene.opened .flap {
+  transform: rotateX(180deg);
+  transition: transform 1.5s cubic-bezier(.22, .8, .2, 1);
+}
+
+.scene.opened .letter {
+  transform: translateY(-38%) translateZ(45px) scale(1.04);
+  transition: transform 1.8s cubic-bezier(.22, .8, .2, 1);
+}
+
+.scene.opened .seal {
+  transform: translate(-50%, -50%) scale(0) rotate(35deg);
+  opacity: 0;
+}
+
+.scene.opened .envelope {
+  opacity: 1;
+  filter: drop-shadow(0 35px 28px rgba(91,55,68,.23));
+}
+
+.scene.opened .couple {
+  animation: stickerToLetter 1.4s ease-in forwards;
+}
+
+.scene.opened .instruction {
+  opacity: 0;
+}
+    .scene.to-menu .world {
+      opacity: 0;
+      transition: opacity .7s ease;
+    }
+
+    /* Menu */
+    .menu {
+      position: absolute;
+      z-index: 30;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.2);
+      background:
+        radial-gradient(ellipse at 10% 10%, rgba(255,173,190,.5), transparent 42%),
+        radial-gradient(ellipse at 90% 90%, rgba(170,202,145,.5), transparent 45%),
+        linear-gradient(135deg, #fffaf7, #fff1f4 55%, #f1f7e9);
+    }
+
+    .scene.to-menu .menu {
+      visibility: visible;
+      animation: menuIn 1.4s cubic-bezier(.2,.7,.15,1) forwards;
+    }
+
+    .menu-content {
+      max-width: 470px;
+    }
+
+    .menu-content small {
+      color: #7d9468;
+      text-transform: uppercase;
+      letter-spacing: .25em;
+      font-size: 10px;
+    }
+
+    .menu-content h2 {
+      margin: 16px 0;
+      color: #a75d71;
+      font: italic clamp(38px, 8vw, 68px)/1.05 'Playfair Display', serif;
+    }
+
+    .menu-content p {
+      color: #786d68;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .menu-content .heart {
+      margin-top: 22px;
+      color: #b56b7e;
+      font-size: 27px;
+    }
+
+    .replay {
+      position: absolute;
+      z-index: 60;
+      right: 15px;
+      bottom: 15px;
+      border: 1px solid rgba(120,90,90,.2);
+      border-radius: 99px;
+      padding: 10px 15px;
+      color: #755e61;
+      background: rgba(255,255,255,.7);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    @keyframes cameraMove {
+      0% { transform: translateZ(-220px) scale(.82); }
+      35% { transform: translateZ(100px) scale(1.1); }
+      65% { transform: translateZ(-50px) scale(.95); }
+      100% { transform: translateZ(0) scale(1); }
+    }
+
+    @keyframes coupleJourney {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateZ(-1200px) scale(.08) rotate(-18deg);
+        filter: drop-shadow(0 30px 25px rgba(65,40,50,0));
+      }
+      20% {
+        opacity: 1;
+      }
+      68% {
+        transform: translate(-50%, -50%) translate3d(-10px, -58px, 120px) scale(1.08) rotate(5deg);
+        filter: drop-shadow(0 24px 18px rgba(65,40,50,.18));
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translate3d(0, -70px, 150px) scale(.9) rotate(0);
+        filter: drop-shadow(0 20px 16px rgba(65,40,50,.2));
+      }
+    }
+
+    @keyframes coupleRest {
+      from {
+        transform: translate(-50%, -50%) translate3d(0,-70px,180px) scale(.9);
+      }
+      to {
+        transform: translate(-50%, -50%) translate3d(0,-70px,180px) scale(.9);
+      }
+    }
+
+    @keyframes envelopeJourney {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate3d(0, 100px, -700px) scale(.35) rotateX(22deg);
+      }
+      65% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translate3d(0, -8px, 55px) scale(1.03) rotateX(-3deg);
+      }
+      82% {
+        transform: translate(-50%, -50%) translate3d(0, 3px, 10px) scale(.99) rotateX(1deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateZ(0) scale(1) rotateX(0);
+      }
+    }
+
+    @keyframes sealAppear {
+      0% { transform: translate(-50%, -50%) scale(0) rotate(-30deg); }
+      65% { transform: translate(-50%, -50%) scale(1.2) rotate(8deg); }
+      100% { transform: translate(-50%, -50%) scale(1) rotate(0); }
+    }
+
+    @keyframes enterCamera {
+      0% {
+        transform: translate(-50%, -50%) translateZ(0) scale(1);
+        opacity: 1;
+      }
+      25% {
+        transform: translate(-50%, -50%) translateZ(80px) scale(1.05) rotateZ(-2deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) translateZ(900px) scale(2.8) rotateZ(2deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes stickerToLetter {
+      to {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate3d(0,100px,450px) scale(.12) rotate(20deg);
+      }
+    }
+
+    @keyframes menuIn {
+      0% { opacity: 0; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes decorFloat {
+      from { translate: 0 0; }
+      to { translate: 0 -16px; }
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    @media (max-width: 480px) {
+      .background-title {
+        top: 14%;
+      }
+
+      .envelope {
+        width: 82vw;
+      }
+
+      .decor-a {
+        left: 6%;
+      }
+
+      .decor-b {
+        right: 7%;
+      }
+
+      .decor-c {
+        left: 8%;
+      }
+
+      .decor-d {
+        right: 7%;
+      }
+    }
+
+    @media (max-height: 600px) {
+      .envelope {
+        height: 190px;
+        min-height: 190px;
+      }
+
+      .instruction {
+        top: calc(52% + 125px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+      
+/* ==================================
+   CHIBOO LOADING — STRAWBERRY MATCHA
+================================== */
+
+.love-loading {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(255, 173, 190, .45),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 85% 85%,
+            rgba(170, 202, 145, .45),
+            transparent 40%
+        ),
+        linear-gradient(
+            145deg,
+            #fffaf7,
+            #fff1f4,
+            #f1f7e9
+        );
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .45s ease, visibility .45s ease;
+}
+
+.love-loading.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.loading-content {
+    width: min(100%, 340px);
+    text-align: center;
+    color: #3f3834;
+}
+
+.loading-couple-track {
+    position: relative;
+    width: 100%;
+    height: 110px;
+    margin-bottom: 22px;
+}
+
+.loading-couple {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 76px;
+    height: 76px;
+    object-fit: contain;
+    animation: loading-bounce .65s ease-in-out infinite alternate;
+    filter: drop-shadow(0 8px 10px rgba(80, 60, 60, .12));
+    transform: translateX(0);
+}
+
+.loading-track {
+    position: relative;
+    width: 100%;
+    height: 10px;
+    border-radius: 99px;
+    background: rgba(130, 157, 99, .2);
+    overflow: hidden;
+}
+
+.loading-progress {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #eaa0b2, #829d63);
+    transition: width .08s linear;
+}
+
+.loading-title {
+    margin: 0 0 9px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+}
+
+.loading-caption {
+    margin: 0 0 24px;
+    font-size: .85rem;
+    opacity: .7;
+}
+
+.loading-heart {
+    position: absolute;
+    font-size: 18px;
+    opacity: .7;
+    animation: loading-float 1.8s ease-in-out infinite;
+}
+
+.loading-heart.one {
+    top: 10%;
+    left: 12%;
+}
+
+.loading-heart.two {
+    top: 20%;
+    right: 13%;
+    animation-delay: .5s;
+}
+
+@keyframes loading-bounce {
+    from {
+        transform: translateY(0) rotate(-5deg);
+    }
+    to {
+        transform: translateY(-8px) rotate(5deg);
+    }
+}
+
+@keyframes loading-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-9px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .loading-couple,
+    .loading-heart {
+        animation: none;
+    }
+
+    .love-loading,
+    .loading-progress {
+        transition: none;
+    }
+}
+
+  </style>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;1,500&display=swap');
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+    min-height: 100vh;
+
+    font-family: 'DM Sans', sans-serif;
+    color: #3f3834;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(255, 173, 190, 0.45),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 90% 90%,
+            rgba(170, 202, 145, 0.45),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #fffaf7,
+            #fff1f4 52%,
+            #f1f7e9
+        );
+}
+
+
+/* =========================================================
+   SCREEN SYSTEM
+========================================================= */
+
+.screen {
+    display: none;
+
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 35px 20px;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    background:
+        radial-gradient(
+            circle at 8% 8%,
+            rgba(255, 173, 190, 0.50),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 92% 92%,
+            rgba(170, 202, 145, 0.65),
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            #fffaf7 0%,
+            #fff1f4 50%,
+            #e8f1dc 100%
+        );
+}
+
+.screen.active {
+    display: flex;
+}
+
+
+/* =========================================================
+   TEXT
+========================================================= */
+
+h1 {
+    font-family: 'Playfair Display', serif;
+
+    font-size: clamp(2.6rem, 11vw, 4.5rem);
+    font-weight: 500;
+    font-style: italic;
+
+    line-height: 1.15;
+
+    color: #b94f6d;
+
+    margin-bottom: 15px;
+}
+
+h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+}
+
+.small-text {
+    color: #8b817b;
+
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: #756b65;
+
+    font-size: 0.95rem;
+    line-height: 1.7;
+
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   OPENING SCREEN
+========================================================= */
+
+.opening-content {
+    width: 100%;
+    max-width: 500px;
+}
+
+.opening-content h1 {
+    margin-bottom: 12px;
+}
+
+
+/* =========================================================
+   ENVELOPE
+========================================================= */
+
+.envelope-button {
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+
+    padding: 15px;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================
+   ENVELOPE — STRAWBERRY STYLE
+========================= */
+
+.envelope {
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    z-index: 8;
+
+    width: min(78vw, 430px);
+    height: min(51vw, 275px);
+    min-height: 190px;
+
+    transform-style: preserve-3d;
+    transform: translate(-50%, -50%)
+               translateZ(-700px)
+               scale(.35)
+               rotateX(22deg);
+
+    opacity: 0;
+
+    filter: drop-shadow(
+        0 35px 28px rgba(91, 55, 68, .23)
+    );
+
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.envelope.arrive {
+    animation: envelopeJourney 2.3s 2.2s
+        cubic-bezier(.16, .75, .2, 1) forwards;
+}
+
+.envelope:focus-visible {
+    outline: 2px solid #9c6173;
+    outline-offset: 8px;
+}
+
+/* =========================
+   BAGIAN BELAKANG AMPLOP
+========================= */
+
+.envelope-back {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        140deg,
+        #f8dfe0,
+        #f0c2cb 65%,
+        #e9b2bf
+    );
+
+    box-shadow:
+        inset 0 2px 3px rgba(255, 255, 255, .8),
+        inset 0 -8px 16px rgba(165, 87, 107, .08);
+}
+
+/* =========================
+   SURAT DI DALAM AMPLOP
+========================= */
+
+.letter {
+    position: absolute;
+    z-index: 2;
+
+    top: 8%;
+    left: 9%;
+    right: 9%;
+    height: 84%;
+
+    border-radius: 8px;
+    padding: 23px 12px;
+
+    text-align: center;
+    background: #fffdf8;
+
+    box-shadow: 0 5px 20px
+        rgba(100, 60, 70, .1);
+
+    transform: translateY(8%) translateZ(-8px);
+
+    transition: transform 1.4s
+        cubic-bezier(.22, .8, .2, 1);
+}
+
+.letter small {
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: #a37c80;
+    text-transform: uppercase;
+}
+
+.letter h2 {
+    margin: 13px 0 8px;
+
+    font: italic clamp(23px, 5vw, 35px)/1.1
+        'Playfair Display', serif;
+
+    color: #a85b70;
+}
+
+.letter p {
+    margin: 0;
+    color: #887774;
+    font-size: 11px;
+}
+
+/* =========================
+   BAGIAN DEPAN AMPLOP
+========================= */
+
+.envelope-front {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        135deg,
+        #f4c7d0,
+        #e9aebb
+    );
+
+    clip-path: polygon(
+        0 0,
+        50% 55%,
+        100% 0,
+        100% 100%,
+        0 100%
+    );
+
+    pointer-events: none;
+}
+
+/* =========================
+   PENUTUP AMPLOP
+========================= */
+
+.flap {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+
+    transform-origin: 50% 0%;
+    transform: rotateX(0deg);
+
+    transform-style: preserve-3d;
+
+    transition: transform 1.1s
+        cubic-bezier(.2, .7, .15, 1);
+
+    pointer-events: none;
+}
+
+.flap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        145deg,
+        #fbe6e4,
+        #edbac4
+    );
+
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        50% 66%
+    );
+
+    filter: drop-shadow(
+        0 6px 8px rgba(100, 55, 65, .12)
+    );
+}
+
+/* =========================
+   SEGEL LILIN
+========================= */
+
+.seal {
+    position: absolute;
+
+    top: 55%;
+    left: 50%;
+    z-index: 7;
+
+    width: clamp(48px, 11vw, 72px);
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    display: grid;
+    place-items: center;
+
+    transform: translate(-50%, -50%) scale(0);
+
+    color: #ffedf0;
+    font: 28px 'Playfair Display', serif;
+
+    background: radial-gradient(
+        circle at 30% 25%,
+        #d98b9d,
+        #a74760 65%,
+        #81364f
+    );
+
+    border: 2px solid
+        rgba(255, 255, 255, .4);
+
+    box-shadow:
+        inset 0 2px 5px rgba(255, 255, 255, .4),
+        inset 0 -5px 8px rgba(70, 20, 40, .2),
+        0 8px 17px rgba(90, 40, 60, .25);
+
+    transition:
+        transform .45s ease,
+        opacity .45s ease;
+}
+
+.seal.pop {
+    animation: sealAppear .75s
+        cubic-bezier(.2, 1.5, .4, 1) forwards;
+}
+
+/* =========================
+   PETUNJUK BUKA AMPLOP
+========================= */
+
+.instruction {
+    position: absolute;
+    z-index: 12;
+
+    top: calc(52% + min(31vw, 170px));
+    left: 50%;
+
+    width: max-content;
+    max-width: 90%;
+
+    text-align: center;
+
+    transform: translateX(-50%);
+    opacity: 0;
+
+    color: #8b6870;
+    font-size: 12px;
+    letter-spacing: .08em;
+
+    transition: opacity .8s ease;
+
+    pointer-events: none;
+}
+
+.instruction.show {
+    opacity: 1;
+}
+
+.instruction span {
+    display: inline-block;
+    margin-left: 5px;
+
+    animation: heartPulse 1.5s
+        infinite ease-in-out;
+}
+
+/* =========================
+   ANIMASI KEDATANGAN
+========================= */
+
+@keyframes envelopeJourney {
+    0% {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -50%)
+            translate3d(0, 100px, -700px)
+            scale(.35)
+            rotateX(22deg);
+    }
+
+    65% {
+        opacity: 1;
+
+        transform:
+            translate(-50%, -50%)
+            translate3d(0, -8px, 55px)
+            scale(1.03)
+            rotateX(-3deg);
+    }
+
+    82% {
+        transform:
+            translate(-50%, -50%)
+            translate3d(0, 3px, 10px)
+            scale(.99)
+            rotateX(1deg);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            translate(-50%, -50%)
+            translateZ(0)
+            scale(1)
+            rotateX(0);
+    }
+}
+
+@keyframes sealAppear {
+    0% {
+        transform: translate(-50%, -50%)
+                   scale(0)
+                   rotate(-30deg);
+    }
+
+    65% {
+        transform: translate(-50%, -50%)
+                   scale(1.2)
+                   rotate(8deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%)
+                   scale(1)
+                   rotate(0);
+    }
+}
+
+@keyframes enterCamera {
+    0% {
+        transform: translate(-50%, -50%)
+                   translateZ(0)
+                   scale(1);
+        opacity: 1;
+    }
+
+    25% {
+        transform: translate(-50%, -50%)
+                   translateZ(80px)
+                   scale(1.05)
+                   rotateZ(-2deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%)
+                   translateZ(900px)
+                   scale(2.8)
+                   rotateZ(2deg);
+        opacity: 0;
+    }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 480px) {
+    .envelope {
+        width: 82vw;
+    }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .envelope,
+    .flap,
+    .letter,
+    .seal {
+        animation-duration: .01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* =========================================================
+   MAIN BUTTON
+========================================================= */
+
+.main-button {
+    border: none;
+    border-radius: 50px;
+
+    padding: 12px 28px;
+
+    background: #829d63;
+    color: white;
+
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(100, 120, 70, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.main-button:active {
+    transform: scale(0.95);
+}
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+.menu-content {
+    width: 100%;
+    max-width: 550px;
+}
+
+.menu-content h1 {
+    margin-bottom: 30px;
+}
+
+.menu-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 15px;
+
+    width: 100%;
+    max-width: 420px;
+
+    margin: auto;
+}
+
+.menu-card {
+    border: 1px solid rgba(120, 100, 80, 0.12);
+    border-radius: 22px;
+
+    padding: 25px 12px;
+
+    background: rgba(255, 255, 255, 0.62);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    color: #493b35;
+
+    font-family: 'DM Sans', sans-serif;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 25px rgba(80, 60, 50, 0.08);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.menu-card:active {
+    transform: scale(0.95);
+}
+
+.menu-card span {
+    display: block;
+
+    margin-top: 9px;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.menu-card small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #8b817b;
+
+    font-size: 0.65rem;
+}
+
+.menu-icon {
+    width: 65px;
+    height: 65px;
+
+    margin: auto;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.8rem;
+}
+
+.strawberry-icon {
+    background: #ffe0e7;
+    color: #d75275;
+}
+
+.matcha-icon {
+    background: #e2edd3;
+    color: #79945d;
+}
+
+.vinyl-icon {
+    background: #eee4dc;
+    color: #66584e;
+}
+
+.gift-icon {
+    background: #f8dfdc;
+    color: #c84d70;
+}
+
+
+/* =========================================================
+   SUB SCREENS
+========================================================= */
+
+.sub-screen {
+    position: relative;
+}
+
+.sub-content {
+    width: 100%;
+    max-width: 500px;
+}
+
+.back-button {
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+
+    z-index: 9999;
+
+    border: none;
+    border-radius: 30px;
+
+    padding: 9px 16px;
+
+    background: #829d63;
+    color: white;
+
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px rgba(100, 120, 70, 0.16);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.back-button:active {
+    transform: scale(0.94);
+}
+
+
+/* =========================================================
+   GENERAL CARDS
+========================================================= */
+
+.placeholder-card,
+.letter-card,
+.music-card,
+.gift-card {
+    width: 100%;
+
+    padding: 25px;
+
+    border-radius: 25px;
+
+    background: rgba(255, 255, 255, 0.68);
+
+    box-shadow:
+        0 12px 30px rgba(80, 60, 50, 0.08);
+}
+
+.letter-card h2,
+.gift-card h2 {
+    color: #b94f6d;
+
+    margin-bottom: 12px;
+}
+
+.placeholder-photo {
+    height: 250px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f6d7de,
+            #e0eacb
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #786d66;
+
+    font-size: 0.8rem;
+
+    margin-bottom: 20px;
+}
+
+.placeholder-card p,
+.letter-card p,
+.music-card p,
+.gift-card p {
+    font-size: 0.85rem;
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   JOURNEY SCREEN
+========================================================= */
+
+#screen-journey {
+    position: relative;
+
+    height: 100vh;
+    min-height: 100vh;
+
+    align-items: flex-start;
+    justify-content: center;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding: 75px 14px 60px;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+#screen-journey .back-button {
+    z-index: 5;
+}
+
+
+/* =========================================================
+   JOURNEY CONTENT
+========================================================= */
+
+.journey-content {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: 520px;
+
+    margin: 0 auto;
+}
+
+.journey-content .small-text {
+    margin-bottom: 8px;
+}
+
+.journey-content h1 {
+    margin-bottom: 15px;
+
+    font-size: clamp(2.5rem, 10vw, 4rem);
+}
+
+.journey-intro {
+    max-width: 430px;
+
+    margin: 0 auto 30px;
+
+    color: #756b65;
+
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   JOURNEY DECORATIONS
+========================================================= */
+
+.journey-decor {
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.journey-decor img {
+    position: absolute;
+
+    display: block;
+
+    pointer-events: none;
+}
+
+.decor-strawberry {
+    width: 55px;
+
+    top: 120px;
+    left: 8px;
+
+    animation:
+        strawberryFloat 4s ease-in-out infinite;
+
+    transform-origin: center center;
+}
+
+.decor-matcha {
+    width: 58px;
+
+    top: 250px;
+    right: 5px;
+
+    animation:
+        floatDecor 5s ease-in-out infinite;
+}
+
+.decor-flower {
+    width: 42px;
+
+    top: 390px;
+    left: 12px;
+
+    animation:
+        floatDecor 4.5s ease-in-out infinite;
+}
+
+.decor-sparkle {
+    width: 28px;
+
+    top: 175px;
+    right: 55px;
+
+    animation:
+        sparkleDecor 2.5s ease-in-out infinite;
+}
+
+.decor-bow {
+    width: 48px;
+
+    top: 460px;
+    right: 8px;
+
+    animation:
+        floatDecor 5s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   LOWER JOURNEY DECORATIONS
+========================================================= */
+
+.decor-6,
+.decor-7,
+.decor-8 {
+    position: absolute;
+
+    z-index: 3;
+}
+
+.decor-6 {
+    width: 38px;
+
+    left: -5px;
+    top: 850px;
+
+    transform: rotate(15deg);
+}
+
+.decor-7 {
+    width: 48px;
+
+    right: -5px;
+    top: 1050px;
+
+    transform: rotate(18deg);
+}
+
+.decor-8 {
+    width: 52px;
+
+    left: 0;
+    top: 1250px;
+
+    transform: rotate(-20deg);
+}
+
+
+/* =========================================================
+   JOURNEY DECOR ANIMATION
+========================================================= */
+
+@keyframes floatDecor {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(-10deg);
+    }
+
+    50% {
+        transform:
+            translateY(-8px)
+            rotate(-6deg);
+    }
+}
+
+@keyframes sparkleDecor {
+
+    0%,
+    100% {
+        opacity: 0.45;
+
+        transform:
+            scale(0.9)
+            rotate(0deg);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform:
+            scale(1.15)
+            rotate(15deg);
+    }
+}
+
+@keyframes strawberryFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(-8deg);
+    }
+
+    50% {
+        transform:
+            translateY(-8px)
+            rotate(-5deg);
+    }
+}
+
+
+/* Decoration animation delays */
+
+img[src*="strawberry.svg"] {
+    animation:
+        strawberryFloat 4s ease-in-out infinite;
+}
+
+img[src*="sparkle.svg"] {
+    animation-delay: 0.8s;
+}
+
+img[src*="bow.svg"] {
+    animation-delay: 1.4s;
+}
+
+img[src*="flower.svg"] {
+    animation-delay: 2s;
+}
+
+img[src*="matcha-leaf.svg"] {
+    animation-delay: 2.7s;
+}
+
+
+/* =========================================================
+   JOURNEY PHOTO GRID
+========================================================= */
+
+.photo-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 22px 14px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   POLAROID
+========================================================= */
+
+.polaroid {
+    position: relative;
+
+    width: 100%;
+
+    padding: 7px 7px 14px;
+
+    background: #fffdf9;
+
+    border-radius: 4px;
+
+    box-shadow:
+        0 8px 20px rgba(70, 50, 50, 0.14);
+
+    text-align: center;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.polaroid img {
+    display: block;
+
+    width: 100%;
+    height: 190px;
+
+    object-fit: contain;
+
+    background: #f7f2ed;
+
+    border-radius: 2px;
+}
+
+.polaroid p {
+    margin-top: 10px;
+
+    color: #665a55;
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 0.72rem;
+    font-style: italic;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   POLAROID ROTATION
+========================================================= */
+
+.photo-1 {
+    transform: rotate(-2deg);
+}
+
+.photo-2 {
+    transform: rotate(2deg);
+}
+
+.photo-3 {
+    transform: rotate(1deg);
+}
+
+.photo-4 {
+    transform: rotate(-2deg);
+}
+
+.photo-5 {
+    transform: rotate(-1deg);
+}
+
+.photo-6 {
+    transform: rotate(2deg);
+}
+
+.photo-7 {
+    transform: rotate(2deg);
+}
+
+.photo-8 {
+    transform: rotate(-2deg);
+}
+
+.photo-9 {
+    transform: rotate(1deg);
+}
+
+.photo-10 {
+    transform: rotate(-1deg);
+}
+
+.photo-11 {
+    transform: rotate(2deg);
+}
+
+.photo-12 {
+    transform: rotate(-2deg);
+}
+
+
+/* =========================================================
+   POLAROID TOUCH EFFECT
+========================================================= */
+
+.polaroid:active {
+    transform:
+        scale(1.04)
+        translateY(-8px) !important;
+
+    box-shadow:
+        0 18px 30px rgba(80, 60, 50, 0.18);
+
+    filter: brightness(1.03);
+
+    animation:
+        polaroidShake 0.35s ease-in-out infinite;
+}
+
+@keyframes polaroidShake {
+
+    0% {
+        transform:
+            scale(1.04)
+            translateY(-8px)
+            rotate(0deg) !important;
+    }
+
+    25% {
+        transform:
+            scale(1.04)
+            translateY(-9px)
+            rotate(-1deg) !important;
+    }
+
+    50% {
+        transform:
+            scale(1.04)
+            translateY(-8px)
+            rotate(1deg) !important;
+    }
+
+    75% {
+        transform:
+            scale(1.04)
+            translateY(-9px)
+            rotate(-0.5deg) !important;
+    }
+
+    100% {
+        transform:
+            scale(1.04)
+            translateY(-8px)
+            rotate(0deg) !important;
+    }
+}
+
+
+/* =========================================================
+   WASHI TAPE
+========================================================= */
+
+.washi-tape {
+    position: absolute;
+
+    z-index: 10;
+
+    width: 75px;
+    height: 22px;
+
+    background:
+        rgba(245, 222, 179, 0.75);
+
+    pointer-events: none;
+
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.08);
+
+    clip-path: polygon(
+        0% 5%,
+        5% 0%,
+        95% 0%,
+        100% 5%,
+        98% 50%,
+        100% 95%,
+        95% 100%,
+        5% 100%,
+        0% 95%,
+        2% 50%
+    );
+}
+
+.washi-tape.pink {
+    background:
+        rgba(238, 184, 201, 0.8);
+}
+
+.washi-tape.matcha {
+    background:
+        rgba(186, 201, 162, 0.8);
+}
+
+.washi-tape.cream {
+    background:
+        rgba(255, 218, 226, 0.9);
+}
+
+.washi-tape.ivory {
+    background:
+        rgba(239, 231, 211, 0.92);
+}
+
+.tape-top-left {
+    top: -10px;
+    left: 15px;
+
+    transform: rotate(-12deg);
+}
+
+.tape-top-center {
+    top: -12px;
+    left: 50%;
+
+    transform:
+        translateX(-50%)
+        rotate(2deg);
+}
+
+.tape-top-right {
+    top: -10px;
+    right: 15px;
+
+    transform: rotate(10deg);
+}
+
+
+/* =========================================================
+   JOURNEY ENDING
+========================================================= */
+
+.journey-ending {
+    width: 100%;
+
+    margin: 45px auto 0;
+
+    padding: 25px 15px 20px;
+
+    text-align: center;
+}
+
+.journey-ending span {
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: #c94e70;
+
+    font-size: 1.8rem;
+}
+
+.journey-ending p {
+    width: 100%;
+    max-width: 320px;
+
+    margin: 0 auto;
+
+    color: #756b65;
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 0.9rem;
+    font-style: italic;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   LOVE TOAST
+========================================================= */
+
+.love-toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 35px;
+
+    transform:
+        translateX(-50%)
+        translateY(20px);
+
+    z-index: 99999;
+
+    padding: 11px 20px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255, 250, 247, 0.95);
+
+    border:
+        1px solid rgba(201, 78, 112, 0.15);
+
+    color: #b94f6d;
+
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    box-shadow:
+        0 10px 25px rgba(80, 60, 50, 0.15);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.love-toast.show {
+    opacity: 1;
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+
+/* =========================================================
+   PLAYLIST SCREEN
+========================================================= */
+
+.playlist-screen {
+    position: relative;
+
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    padding: 75px 20px 60px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+    touch-action: pan-y;
+}
+
+
+/* =========================================================
+   PLAYLIST BACK BUTTON
+========================================================= */
+
+.playlist-screen > .back-button,
+.playlist-back-button {
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+
+    z-index: 9999;
+}
+
+
+/* =========================================================
+   PLAYLIST WRAPPER
+========================================================= */
+
+.playlist-wrapper {
+    position: relative;
+
+    width: 100%;
+    max-width: 850px;
+
+    min-height: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    margin: 0 auto;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PLAYLIST INTRO
+========================================================= */
+
+.playlist-intro {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    margin-bottom: 35px;
+}
+
+.rotate-symbol {
+    display: block;
+
+    color: #b94f6d;
+
+    font-size: 1.5rem;
+
+    margin-bottom: 8px;
+}
+
+.playlist-intro h1 {
+    margin-bottom: 12px;
+}
+
+.playlist-intro p {
+    color: #756b65;
+
+    font-size: 0.85rem;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   PLAYLIST MAIN
+========================================================= */
+
+.playlist-main {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SONG PLAYER
+========================================================= */
+
+.playlist-player {
+    width: 100%;
+    max-width: 700px;
+
+    padding: 28px 20px 25px;
+
+    text-align: center;
+
+    border-radius: 25px;
+
+    background:
+        rgba(255, 255, 255, 0.58);
+
+    border:
+        1px solid rgba(120, 100, 80, 0.10);
+
+    box-shadow:
+        0 12px 30px rgba(80, 60, 50, 0.07);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    box-sizing: border-box;
+}
+
+.playlist-label {
+    margin-bottom: 12px;
+
+    color: #8b817b;
+
+    font-size: 0.72rem;
+    letter-spacing: 4px;
+}
+
+.playlist-player h1 {
+    margin-bottom: 8px;
+
+    font-size: clamp(2rem, 7vw, 3.5rem);
+}
+
+.playlist-artist {
+    margin-bottom: 20px;
+
+    color: #756b65;
+
+    font-size: 1rem;
+}
+
+
+/* =========================================================
+   PLAY BUTTON — STRAWBERRY
+========================================================= */
+
+.playlist-play-button {
+    width: 66px;
+    height: 66px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #c94e70;
+
+    color: white;
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 25px rgba(201, 78, 112, 0.28);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.playlist-play-button:active {
+    transform: scale(0.93);
+
+    box-shadow:
+        0 6px 15px rgba(201, 78, 112, 0.20);
+}
+
+
+/* =========================================================
+   PLAYLIST PROGRESS — STRAWBERRY
+========================================================= */
+
+.playlist-progress {
+    position: relative;
+
+    width: 85%;
+    max-width: 500px;
+
+    height: 8px;
+
+    margin: 22px auto 0;
+
+    border-radius: 999px;
+
+    background:
+        rgba(120, 110, 90, 0.18);
+
+    overflow: visible;
+
+    cursor: pointer;
+
+    touch-action: none;
+}
+
+
+.playlist-progress-fill {
+    position: relative;
+
+    width: 0%;
+    height: 100%;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #d85b7a,
+            #c94e70
+        );
+
+    pointer-events: none;
+
+    transition:
+        width 0.05s linear;
+}
+
+
+/* BULATAN STRAWBERRY DI UJUNG */
+
+.playlist-progress-fill::after {
+    content: "";
+
+    position: absolute;
+
+    right: -6px;
+    top: 50%;
+
+    width: 13px;
+    height: 13px;
+
+    transform: translateY(-50%);
+
+    border-radius: 50%;
+
+    ;
+}
+.playlist-progress-fill::after {
+    content: "";
+
+    position: absolute;
+
+    right: -9px;
+    top: 50%;
+
+    width: 20px;
+    height: 20px;
+
+    transform: translateY(-50%);
+
+    background-image:
+        url("strawberry.svg");
+
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    filter:
+        drop-shadow(
+            0 2px 4px
+            rgba(120, 70, 60, 0.20)
+        );
+}
+/* =========================================================
+   LYRICS
+========================================================= */
+
+.playlist-lyrics {
+    width: 100%;
+    max-width: 700px;
+
+    margin-top: 25px;
+
+    text-align: center;
+}
+
+.lyrics-icon {
+    margin-bottom: 8px;
+
+    color: #b94f6d;
+
+    font-size: 1.7rem;
+}
+
+.lyrics-title {
+    color: #493b35;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.lyrics-box {
+    width: 100%;
+
+    margin-top: 15px;
+
+    padding: 20px 25px;
+
+    border: 1px solid rgba(120, 100, 80, 0.10);
+    border-radius: 18px;
+
+    background:
+        rgba(255, 255, 255, 0.58);
+
+    box-shadow:
+        0 8px 20px rgba(80, 60, 50, 0.06);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.playlist-lyrics p {
+    margin: 0;
+
+    line-height: 1.7;
+
+    font-size: 0.85rem;
+}
+
+.lyric-current {
+    color: #b94f6d;
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 1rem !important;
+    font-style: italic;
+}
+
+.lyric-next {
+    margin-top: 8px !important;
+
+    color: #9b918b;
+
+    font-size: 0.75rem !important;
+}
+
+
+/* =========================================================
+   OPTIONAL LYRICS BUTTON
+========================================================= */
+
+.lyrics-button {
+    width: 32px;
+    height: 32px;
+
+    border:
+        1px solid rgba(80, 70, 60, 0.25);
+
+    border-radius: 5px;
+
+    background:
+        rgba(255, 255, 255, 0.45);
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   MEMORY VIDEO
+========================================================= */
+
+.playlist-memory {
+    width: 100%;
+    max-width: 700px;
+
+    margin-top: 30px;
+    margin-bottom: 30px;
+
+    text-align: center;
+
+    box-sizing: border-box;
+}
+
+.memory-label {
+    margin-bottom: 12px;
+
+    color: #756b65;
+
+    font-size: 0.85rem;
+}
+
+.memory-video {
+    width: min(100%, 520px);
+
+    aspect-ratio: 16 / 9;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f6d7de,
+            #e0eacb
+        );
+
+    box-shadow:
+        0 12px 30px rgba(80, 60, 50, 0.12);
+}
+
+.memory-video-player {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border: none;
+  pointer-events: none;
+}
+
+.memory-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #829d63;
+
+    font-size: 2rem;
+}
+
+
+/* =========================================================
+   MOBILE — GENERAL
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .screen {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    h1 {
+        font-size: clamp(2.35rem, 11vw, 3.5rem);
+    }
+
+    .menu-grid {
+        gap: 12px;
+    }
+
+    .menu-card {
+        padding: 22px 10px;
+    }
+
+    .menu-icon {
+        width: 58px;
+        height: 58px;
+
+        font-size: 1.6rem;
+    }
+
+
+    /* Journey */
+
+    #screen-journey {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .photo-grid {
+        gap: 20px 12px;
+    }
+
+    .polaroid {
+        padding: 6px 6px 13px;
+    }
+
+    .polaroid img {
+        height: 180px;
+    }
+
+    .washi-tape {
+        width: 68px;
+        height: 20px;
+    }
+
+
+    /* Journey decor */
+
+    .decor-strawberry {
+        width: 46px;
+        left: 3px;
+    }
+
+    .decor-matcha {
+        width: 48px;
+        right: 2px;
+    }
+
+    .decor-flower {
+        width: 36px;
+        left: 5px;
+    }
+
+    .decor-sparkle {
+        width: 23px;
+        right: 38px;
+    }
+
+    .decor-bow {
+        width: 40px;
+        right: 3px;
+    }
+
+
+    /* Love toast */
+
+    .love-toast {
+        bottom: 25px;
+
+        max-width: calc(100vw - 40px);
+
+        white-space: nowrap;
+    }
+
+
+    /* Playlist */
+
+    .playlist-screen {
+        padding:
+            75px
+            14px
+            45px;
+    }
+
+    .playlist-wrapper {
+        width: 100%;
+    }
+
+    .playlist-intro {
+        margin-bottom: 25px;
+    }
+
+    .playlist-intro h1 {
+        font-size: clamp(2rem, 10vw, 3rem);
+    }
+
+    .playlist-intro p {
+        font-size: 0.8rem;
+    }
+
+    .playlist-player {
+        padding:
+            24px
+            14px
+            22px;
+    }
+
+    .playlist-player h1 {
+        font-size: clamp(1.8rem, 9vw, 2.7rem);
+    }
+
+    .playlist-progress {
+        width: 90%;
+    }
+
+    .playlist-lyrics {
+        margin-top: 22px;
+    }
+
+    .lyrics-box {
+        padding:
+            18px
+            15px;
+    }
+
+    .playlist-memory {
+        margin-top: 25px;
+    }
+
+    .memory-video {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+
+/* =========================================================
+   LANDSCAPE — PLAYLIST
+========================================================= */
+
+@media (orientation: landscape) {
+
+    .playlist-screen {
+        padding:
+            60px
+            25px
+            40px;
+    }
+
+    .playlist-wrapper {
+        max-width: 950px;
+    }
+
+    .playlist-main {
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+        gap: 25px;
+
+        align-items: start;
+    }
+
+    .playlist-player {
+        grid-column: 1 / -1;
+        max-width: none;
+    }
+
+    .playlist-lyrics {
+        width: 100%;
+        max-width: none;
+
+        margin-top: 0;
+    }
+
+    .playlist-memory {
+        width: 100%;
+        max-width: none;
+
+        margin-top: 0;
+    }
+
+    .memory-video {
+        width: 100%;
+        max-width: 500px;
+    }
+}
+/* =========================================================
+   PLAYLIST — COUPLE STICKERS
+========================================================= */
+
+.playlist-stickers {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    z-index: 20;
+}
+
+
+/* BASE STICKER */
+
+.playlist-sticker {
+    position: absolute;
+
+    width: 125px;
+    height: auto;
+
+    pointer-events: none;
+
+    filter:
+        drop-shadow(
+            0 7px 12px
+            rgba(80, 60, 50, 0.16)
+        );
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+   SWEET
+   agak keluar dari sisi kanan player
+========================================================= */
+
+.sticker-sweet {
+
+    top: 15%;
+    right: 7%;
+
+    transform:
+        rotate(7deg);
+
+    z-index: 22;
+}
+
+
+/* =========================================================
+   PLAYLIST — COUPLE STICKERS FIX
+========================================================= */
+
+.playlist-stickers {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.playlist-sticker {
+    position: absolute;
+    width: 105px;
+    height: auto;
+    pointer-events: none;
+
+    filter:
+        drop-shadow(
+            0 6px 10px
+            rgba(80, 60, 50, 0.14)
+        );
+}
+
+
+/* SWEET — kanan atas */
+
+.sticker-sweet {
+    top: 10%;
+    right: -1%;
+    width: 95px;
+    transform: rotate(7deg);
+    z-index: 22;
+}
+
+
+/* FUNNY — kiri bawah card */
+
+.sticker-funny {
+    top: 39%;
+    left: -2%;
+    width: 105px;
+    transform: rotate(-7deg);
+    z-index: 22;
+}
+
+
+/* CHAOS — kanan bawah, dekat memories */
+
+.sticker-chaos {
+    right: -1%;
+    bottom: 3%;
+    width: 105px;
+    transform: rotate(7deg);
+    z-index: 22;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 500px) {
+
+    .playlist-sticker {
+        width: 90px;
+    }
+
+    .sticker-sweet {
+        top: 10%;
+        right: -2%;
+        width: 88px;
+    }
+
+    .sticker-funny {
+        top: 40%;
+        left: -3%;
+        width: 95px;
+    }
+
+    .sticker-chaos {
+        right: -2%;
+        bottom: 3%;
+        width: 95px;
+    }
+
+}
+/* =========================================================
+   PLAYLIST — SMALL DECORATIONS
+========================================================= */
+
+.playlist-mini-decor {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 15;
+}
+
+.mini-decor {
+    position: absolute;
+    height: auto;
+    pointer-events: none;
+    opacity: 0.88;
+
+    filter:
+        drop-shadow(
+            0 3px 5px
+            rgba(80, 60, 50, 0.10)
+        );
+}
+
+
+/* 🍓 STRAWBERRY */
+
+.mini-strawberry-1 {
+    width: 27px;
+    top: 27%;
+    left: 7%;
+    transform: rotate(-12deg);
+}
+
+.mini-strawberry-2 {
+    width: 22px;
+    top: 67%;
+    right: 8%;
+    transform: rotate(15deg);
+}
+
+
+/* 🍵 MATCHA LEAF */
+
+.mini-matcha-1 {
+    width: 42px;
+    top: 32%;
+    right: 5%;
+    transform: rotate(18deg);
+}
+
+.mini-matcha-2 {
+    width: 35px;
+    bottom: 21%;
+    left: 6%;
+    transform: rotate(-18deg);
+}
+
+
+/* 🌸 FLOWER */
+
+.mini-flower-1 {
+    width: 29px;
+    top: 55%;
+    right: 7%;
+    transform: rotate(10deg);
+}
+
+
+/* ✨ SPARKLE */
+
+.mini-sparkle-1 {
+    width: 25px;
+    top: 18%;
+    left: 8%;
+    transform: rotate(-8deg);
+}
+
+.mini-sparkle-2 {
+    width: 20px;
+    bottom: 28%;
+    right: 11%;
+    transform: rotate(12deg);
+}
+
+
+/* 🎀 BOW */
+
+.mini-bow {
+    width: 34px;
+    top: 74%;
+    left: 9%;
+    transform: rotate(-10deg);
+}
+
+
+/* MOBILE */
+
+@media (max-width: 500px) {
+
+    .mini-strawberry-1 {
+        width: 23px;
+        left: 5%;
+    }
+
+    .mini-strawberry-2 {
+        width: 19px;
+        right: 5%;
+    }
+
+    .mini-matcha-1 {
+        width: 36px;
+        right: 3%;
+    }
+
+    .mini-matcha-2 {
+        width: 30px;
+        left: 4%;
+    }
+
+    .mini-flower-1 {
+        width: 25px;
+        right: 4%;
+    }
+
+    .mini-sparkle-1 {
+        width: 21px;
+        left: 5%;
+    }
+
+    .mini-sparkle-2 {
+        width: 17px;
+        right: 7%;
+    }
+
+    .mini-bow {
+        width: 29px;
+        left: 6%;
+    }
+
+}
+/* =========================================================
+   OPENING COVER — STRAWBERRY × MATCHA 3D
+========================================================= */
+
+#screen-opening {
+    position: relative;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(255, 173, 190, 0.42),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 85% 82%,
+            rgba(170, 202, 145, 0.42),
+            transparent 36%
+        ),
+        linear-gradient(
+            135deg,
+            #fffaf7 0%,
+            #fff1f4 50%,
+            #f1f7e9 100%
+        );
+}
+
+
+/* =========================================================
+   BACKGROUND DECOR
+========================================================= */
+
+.opening-decor {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+    z-index: 1;
+}
+
+.opening-decor img {
+    position: absolute;
+    height: auto;
+
+    filter:
+        drop-shadow(
+            0 5px 8px
+            rgba(80, 60, 50, 0.10)
+        );
+}
+
+
+/* strawberry */
+
+.opening-decor-1 {
+    width: 72px;
+    top: 9%;
+    left: 7%;
+    transform: rotate(-16deg);
+}
+
+
+/* matcha */
+
+.opening-decor-2 {
+    width: 82px;
+    right: 6%;
+    top: 17%;
+    transform: rotate(18deg);
+}
+
+
+/* flower */
+
+.opening-decor-3 {
+    width: 48px;
+    left: 7%;
+    bottom: 17%;
+    transform: rotate(-12deg);
+}
+
+
+/* sparkle */
+
+.opening-decor-4 {
+    width: 30px;
+    right: 11%;
+    bottom: 19%;
+    transform: rotate(8deg);
+}
+
+.opening-decor-5 {
+    width: 22px;
+    left: 16%;
+    top: 28%;
+    transform: rotate(-8deg);
+}
+
+
+/* =========================================================
+   COVER WRAPPER
+========================================================= */
+
+.opening-cover {
+    position: relative;
+    z-index: 5;
+
+    width: min(78vw, 390px);
+    height: min(78vh, 570px);
+
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    perspective: 1200px;
+}
+
+
+/* =========================================================
+   3D COVER
+========================================================= */
+
+.opening-cover-inner {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding:
+        48px
+        30px
+        28px;
+
+    box-sizing: border-box;
+
+    border-radius: 10px 16px 14px 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fffdfb 0%,
+            #fff4f5 55%,
+            #f4f8eb 100%
+        );
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.9);
+
+    box-shadow:
+        18px 24px 0
+        rgba(174, 142, 131, 0.10),
+
+        0 28px 55px
+        rgba(90, 70, 60, 0.20),
+
+        inset 0 0 0 1px
+        rgba(196, 157, 148, 0.10);
+
+    transform:
+        rotateY(-7deg)
+        rotateX(3deg)
+        rotateZ(-3deg);
+
+    transform-style: preserve-3d;
+
+    transition:
+        transform 0.5s ease,
+        box-shadow 0.5s ease;
+
+    isolation: isolate;
+}
+
+
+/* fake book depth */
+
+.opening-cover-inner::before {
+    content: "";
+
+    position: absolute;
+
+    top: 5px;
+    right: -13px;
+
+    width: 14px;
+    height: calc(100% - 10px);
+
+    border-radius: 0 10px 10px 0;
+
+    background:
+        linear-gradient(
+            to right,
+            #e9dcd7,
+            #d9c8c1
+        );
+
+    transform:
+        translateZ(-8px);
+
+    box-shadow:
+        4px 8px 12px
+        rgba(70, 50, 45, 0.10);
+
+    z-index: -1;
+}
+
+
+/* bottom depth */
+
+.opening-cover-inner::after {
+    content: "";
+
+    position: absolute;
+
+    left: 12px;
+    right: -7px;
+    bottom: -13px;
+
+    height: 14px;
+
+    border-radius: 0 0 10px 10px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #eadeda,
+            #d9c8c1
+        );
+
+    transform:
+        translateZ(-8px);
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   COVER TEXT
+========================================================= */
+
+.cover-top-text {
+    margin-bottom: 8px;
+
+    font-family:
+        Poppins,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 3px;
+    text-transform: uppercase;
+
+    color: #8f817a;
+}
+
+
+.cover-title {
+    margin: 0;
+
+    text-align: center;
+
+    font-family:
+        "Great Vibes",
+        cursive;
+
+    font-size: clamp(48px, 12vw, 70px);
+
+    line-height: 0.95;
+
+    font-weight: 400;
+
+    color: #b94f6d;
+
+    text-shadow:
+        0 2px 0
+        rgba(255,255,255,0.8);
+}
+
+
+.cover-title span {
+    color: #829d63;
+}
+
+
+.cover-subtitle {
+    margin:
+        17px
+        0
+        22px;
+
+    text-align: center;
+
+    font-family:
+        Poppins,
+        sans-serif;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+
+    letter-spacing: 1px;
+
+    color: #776c66;
+}
+
+
+/* =========================================================
+   ENVELOPE
+========================================================= */
+
+#screen-opening .envelope-button {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 190px;
+    height: 140px;
+
+    margin-top: 3px;
+
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    cursor: pointer;
+
+    transform:
+        translateZ(30px)
+        rotateZ(1deg);
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+#screen-opening .envelope-button:hover {
+    transform:
+        translateZ(40px)
+        rotateZ(1deg)
+        scale(1.04);
+}
+
+
+#screen-opening .envelope-button:active {
+    transform:
+        translateZ(20px)
+        scale(0.97);
+}
+
+
+/* =========================================================
+   TAP TEXT
+========================================================= */
+
+#screen-opening .tap-text {
+    margin-top: 2px;
+
+    font-family:
+        Poppins,
+        sans-serif;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: #9a8c84;
+
+    animation:
+        openingPulse 2s ease-in-out infinite;
+}
+
+
+@keyframes openingPulse {
+
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+}
+
+
+/* =========================================================
+   SIGNATURE
+========================================================= */
+
+.cover-signature {
+    margin-top: auto;
+
+    font-family:
+        Poppins,
+        sans-serif;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    color: #a3958d;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   COVER CORNER HEART
+========================================================= */
+
+.cover-corner {
+    position: absolute;
+
+    right: 20px;
+    bottom: 18px;
+
+    font-size: 18px;
+
+    color: #b94f6d;
+
+    transform:
+        rotate(12deg);
+}
+
+
+/* =========================================================
+   COVER DECORATIONS
+========================================================= */
+
+.opening-cover-inner > img {
+    position: absolute;
+
+    height: auto;
+
+    pointer-events: none;
+
+    filter:
+        drop-shadow(
+            0 4px 6px
+            rgba(80, 60, 50, 0.10)
+        );
+}
+
+
+/* strawberry */
+
+.cover-strawberry {
+    width: 55px;
+
+    top: 20px;
+    left: 18px;
+
+    transform:
+        rotate(-14deg);
+}
+
+
+/* matcha */
+
+.cover-matcha {
+    width: 67px;
+
+    right: 15px;
+    top: 82px;
+
+    transform:
+        rotate(19deg);
+}
+
+
+/* flower */
+
+.cover-flower {
+    width: 42px;
+
+    left: 18px;
+    bottom: 78px;
+
+    transform:
+        rotate(-10deg);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .opening-cover {
+        width: 78vw;
+        height: 72vh;
+    }
+
+
+    .opening-cover-inner {
+        padding:
+            38px
+            22px
+            24px;
+    }
+
+
+    .cover-top-text {
+        font-size: 8px;
+        letter-spacing: 2.5px;
+    }
+
+
+    .cover-title {
+        font-size: 53px;
+    }
+
+
+    .cover-subtitle {
+        margin-top: 14px;
+        margin-bottom: 16px;
+
+        font-size: 10px;
+    }
+
+
+    #screen-opening .envelope-button {
+        width: 165px;
+        height: 125px;
+    }
+
+
+    .cover-strawberry {
+        width: 45px;
+
+        top: 17px;
+        left: 12px;
+    }
+
+
+    .cover-matcha {
+        width: 53px;
+
+        right: 10px;
+        top: 72px;
+    }
+
+
+    .cover-flower {
+        width: 34px;
+
+        left: 12px;
+        bottom: 68px;
+    }
+
+
+    .opening-decor-1 {
+        width: 55px;
+        left: 3%;
+    }
+
+
+    .opening-decor-2 {
+        width: 62px;
+        right: 2%;
+    }
+
+
+    .opening-decor-3 {
+        width: 38px;
+        left: 4%;
+    }
+
+
+    .opening-decor-4 {
+        width: 23px;
+        right: 5%;
+    }
+
+
+    .opening-decor-5 {
+        width: 18px;
+        left: 10%;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .opening-cover-inner,
+    #screen-opening .envelope-button,
+    #screen-opening .tap-text {
+        animation: none;
+        transition: none;
+    }
+
+}
+/* =========================================================
+   MENU — 3D BOOK PAGE
+   Strawberry × Matcha
+========================================================= */
+
+#screen-menu {
+    position: relative;
+
+    perspective: 1200px;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(255, 173, 190, 0.42),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 85% 82%,
+            rgba(170, 202, 145, 0.42),
+            transparent 38%
+        ),
+        linear-gradient(
+            135deg,
+            #fffaf7 0%,
+            #fff1f4 50%,
+            #f1f7e9 100%
+        );
+}
+
+
+/* =========================================================
+   BOOK PAGE
+========================================================= */
+
+#screen-menu .menu-content {
+    position: relative;
+
+    transform-style: preserve-3d;
+
+    animation:
+        menuPageEnter
+        1.5s
+        cubic-bezier(.2,.75,.25,1)
+        both;
+}
+
+
+@keyframes menuPageEnter {
+
+    from {
+        opacity: 0;
+
+        transform:
+            perspective(1200px)
+            rotateY(-14deg)
+            translateX(45px)
+            translateZ(-40px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            perspective(1200px)
+            rotateY(0deg)
+            translateX(0)
+            translateZ(0);
+    }
+
+}
+
+
+/* =========================================================
+   MENU TITLE — FLOATING ON PAGE
+========================================================= */
+
+#screen-menu .small-text,
+#screen-menu > .menu-content > h1 {
+    position: relative;
+
+    transform:
+        translateZ(20px);
+
+    text-shadow:
+        0 4px 10px
+        rgba(90, 70, 60, 0.08);
+}
+
+
+/* =========================================================
+   MENU GRID
+========================================================= */
+
+#screen-menu .menu-grid {
+    position: relative;
+
+    perspective: 900px;
+
+    transform-style: preserve-3d;
+}
+
+
+/* =========================================================
+   MENU CARD — PAPER DEPTH
+========================================================= */
+
+#screen-menu .menu-card {
+    position: relative;
+
+    transform-style: preserve-3d;
+
+    transform:
+        translateZ(0)
+        rotateX(0deg);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.9);
+
+    box-shadow:
+        0 8px 0
+        rgba(180, 160, 150, 0.08),
+
+        0 15px 25px
+        rgba(100, 80, 70, 0.10);
+
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease;
+}
+
+
+/* paper thickness */
+
+#screen-menu .menu-card::after {
+    content: "";
+
+    position: absolute;
+
+    left: 5px;
+    right: -5px;
+    bottom: -6px;
+
+    height: 7px;
+
+    border-radius: 0 0 12px 12px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(226, 215, 208, 0.75),
+            rgba(207, 194, 185, 0.55)
+        );
+
+    transform:
+        translateZ(-5px);
+
+    z-index: -1;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   TOUCH / HOVER
+========================================================= */
+
+#screen-menu .menu-card:hover {
+    transform:
+        translateY(-6px)
+        translateZ(18px)
+        rotateX(2deg);
+
+    box-shadow:
+        0 11px 0
+        rgba(180, 160, 150, 0.08),
+
+        0 22px 35px
+        rgba(100, 80, 70, 0.15);
+}
+
+
+#screen-menu .menu-card:active {
+    transform:
+        translateY(1px)
+        translateZ(5px)
+        scale(0.985);
+
+    box-shadow:
+        0 4px 0
+        rgba(180, 160, 150, 0.07),
+
+        0 8px 16px
+        rgba(100, 80, 70, 0.10);
+}
+
+
+/* =========================================================
+   MENU ICON — FLOATING
+========================================================= */
+
+#screen-menu .menu-icon {
+    position: relative;
+
+    transform:
+        translateZ(25px);
+
+    box-shadow:
+        0 7px 12px
+        rgba(80, 60, 50, 0.08);
+}
+
+
+/* =========================================================
+   MENU TEXT — SLIGHT DEPTH
+========================================================= */
+
+#screen-menu .menu-card span {
+    position: relative;
+
+    transform:
+        translateZ(14px);
+
+    text-shadow:
+        0 2px 5px
+        rgba(80, 60, 50, 0.07);
+}
+
+
+#screen-menu .menu-card small {
+    position: relative;
+
+    transform:
+        translateZ(10px);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    #screen-menu .menu-card {
+        box-shadow:
+            0 6px 0
+            rgba(180, 160, 150, 0.08),
+
+            0 12px 20px
+            rgba(100, 80, 70, 0.09);
+    }
+
+    #screen-menu .menu-card:hover {
+        transform:
+            translateY(-3px)
+            translateZ(10px);
+    }
+
+}
+/* =========================================================
+   ENVELOPE — SURPRISE SHAKE
+========================================================= */
+
+/* Envelope tetap punya titik transform yang stabil */
+#screen-opening .envelope-button {
+    transform-origin: center center;
+}
+
+
+/* Saat ditekan: mulai reaksi */
+#screen-opening .envelope-button.envelope-shaking {
+    animation:
+        envelopeSurprise
+        0.85s
+        cubic-bezier(.36,.07,.19,.97)
+        both;
+}
+
+
+/* Amplop seperti digoyang dari dalam */
+@keyframes envelopeSurprise {
+
+    0% {
+        transform:
+            translateZ(30px)
+            rotateZ(0deg)
+            scale(1);
+    }
+
+    10% {
+        transform:
+            translateZ(35px)
+            rotateZ(-3deg)
+            scale(1.03);
+    }
+
+    20% {
+        transform:
+            translateZ(40px)
+            rotateZ(3.5deg)
+            scale(1.05);
+    }
+
+    30% {
+        transform:
+            translateZ(45px)
+            rotateZ(-4deg)
+            scale(1.06);
+    }
+
+    40% {
+        transform:
+            translateZ(48px)
+            rotateZ(4deg)
+            scale(1.07);
+    }
+
+    50% {
+        transform:
+            translateZ(50px)
+            rotateZ(-4.5deg)
+            scale(1.08);
+    }
+
+    60% {
+        transform:
+            translateZ(52px)
+            rotateZ(3.5deg)
+            scale(1.08);
+    }
+
+    70% {
+        transform:
+            translateZ(55px)
+            rotateZ(-2.5deg)
+            scale(1.09);
+    }
+
+    80% {
+        transform:
+            translateZ(58px)
+            rotateZ(1.5deg)
+            scale(1.10);
+    }
+
+    90% {
+        transform:
+            translateZ(62px)
+            rotateZ(-0.5deg)
+            scale(1.11);
+    }
+
+    100% {
+        transform:
+            translateZ(65px)
+            rotateZ(0deg)
+            scale(1.08);
+    }
+}
+
+
+/* =========================================================
+   WAX SEAL — IKUT "KEGUNCANG"
+========================================================= */
+
+#screen-opening .envelope-button.envelope-shaking .wax-seal {
+    animation:
+        sealShake
+        0.85s
+        cubic-bezier(.36,.07,.19,.97)
+        both;
+}
+
+
+@keyframes sealShake {
+
+    0%,
+    100% {
+        transform:
+            translate(-50%, -50%)
+            rotate(0deg)
+            scale(1);
+    }
+
+    25% {
+        transform:
+            translate(-50%, -50%)
+            rotate(-8deg)
+            scale(1.08);
+    }
+
+    50% {
+        transform:
+            translate(-50%, -50%)
+            rotate(9deg)
+            scale(1.12);
+    }
+
+    75% {
+        transform:
+            translate(-50%, -50%)
+            rotate(-6deg)
+            scale(1.08);
+    }
+
+}
+
+
+/* =========================================================
+   LITTLE "BOUNCE" BEFORE OPENING
+========================================================= */
+
+#screen-opening .envelope-button.envelope-shaking::after {
+    content: "";
+
+    position: absolute;
+
+    width: 130px;
+    height: 22px;
+
+    left: 50%;
+    bottom: 2px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+        rgba(100, 70, 60, 0.12);
+
+    filter:
+        blur(7px);
+
+    opacity: 0;
+
+    animation:
+        envelopeShadow
+        0.85s
+        ease-out
+        both;
+
+    pointer-events: none;
+}
+
+
+@keyframes envelopeShadow {
+
+    0% {
+        opacity: 0.10;
+        transform:
+            translateX(-50%)
+            scale(0.85);
+    }
+
+    50% {
+        opacity: 0.18;
+        transform:
+            translateX(-50%)
+            scale(1.05);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translateX(-50%)
+            scale(1.15);
+    }
+
+}
+/* =========================================================
+   JOURNEY — 3D MEMORY ALBUM
+   Strawberry × Matcha
+========================================================= */
+
+#screen-journey {
+    position: relative;
+    overflow-x: hidden;
+    perspective: 1400px;
+
+    background:
+        radial-gradient(
+            circle at 12% 10%,
+            rgba(255, 173, 190, 0.38),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 88% 82%,
+            rgba(170, 202, 145, 0.38),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #fffaf7 0%,
+            #fff1f4 50%,
+            #f1f7e9 100%
+        );
+}
+
+
+/* =========================================================
+   JOURNEY CONTENT — BOOK DEPTH
+========================================================= */
+
+#screen-journey .journey-content {
+    position: relative;
+
+    transform-style: preserve-3d;
+
+    animation:
+        journeyPageEnter
+        1.1s
+        cubic-bezier(.2,.75,.25,1)
+        both;
+}
+
+
+@keyframes journeyPageEnter {
+
+    from {
+        opacity: 0;
+
+        transform:
+            perspective(1400px)
+            rotateY(-10deg)
+            translateX(35px)
+            translateZ(-40px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            perspective(1400px)
+            rotateY(0deg)
+            translateX(0)
+            translateZ(0);
+    }
+
+}
+
+
+/* =========================================================
+   JOURNEY TITLE
+========================================================= */
+
+#screen-journey .small-text,
+#screen-journey h1,
+#screen-journey .journey-intro {
+    position: relative;
+
+    transform:
+        translateZ(25px);
+
+    text-shadow:
+        0 4px 10px
+        rgba(90, 70, 60, 0.08);
+}
+
+
+/* =========================================================
+   PHOTO GRID
+========================================================= */
+
+#screen-journey .photo-grid {
+    position: relative;
+
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
+
+
+/* =========================================================
+   POLAROID — PHYSICAL PAPER
+========================================================= */
+
+#screen-journey .polaroid {
+    position: relative;
+
+    transform-style: preserve-3d;
+
+    box-shadow:
+        0 5px 0
+        rgba(180, 160, 150, 0.08),
+
+        0 14px 25px
+        rgba(90, 70, 60, 0.13);
+
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+
+/* PAPER THICKNESS */
+
+#screen-journey .polaroid::after {
+    content: "";
+
+    position: absolute;
+
+    left: 4px;
+    right: -4px;
+    bottom: -5px;
+
+    height: 6px;
+
+    border-radius:
+        0 0 5px 5px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #e8ded9,
+            #d8cbc4
+        );
+
+    transform:
+        translateZ(-5px);
+
+    z-index: -1;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   POLAROID TOUCH
+========================================================= */
+
+#screen-journey .polaroid:hover {
+
+    transform:
+        translateY(-7px)
+        translateZ(18px)
+        rotateX(2deg);
+
+    box-shadow:
+        0 8px 0
+        rgba(180, 160, 150, 0.08),
+
+        0 22px 34px
+        rgba(90, 70, 60, 0.17);
+}
+
+
+#screen-journey .polaroid:active {
+
+    transform:
+        translateY(-2px)
+        translateZ(8px)
+        scale(0.985);
+
+}
+
+
+/* =========================================================
+   PHOTO DEPTH
+========================================================= */
+
+#screen-journey .polaroid img {
+    position: relative;
+
+    transform:
+        translateZ(8px);
+
+    transition:
+        transform 0.35s ease;
+}
+
+
+#screen-journey .polaroid:hover img {
+    transform:
+        translateZ(12px)
+        scale(1.015);
+}
+
+
+/* =========================================================
+   POLAROID CAPTION
+========================================================= */
+
+#screen-journey .polaroid p {
+    position: relative;
+
+    transform:
+        translateZ(10px);
+
+    text-shadow:
+        0 2px 5px
+        rgba(80, 60, 50, 0.08);
+}
+
+
+/* =========================================================
+   JOURNEY ENDING
+========================================================= */
+
+#screen-journey .journey-ending {
+    position: relative;
+
+    transform:
+        translateZ(20px);
+
+    text-shadow:
+        0 4px 10px
+        rgba(90, 70, 60, 0.08);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    #screen-journey .polaroid:hover {
+        transform:
+            translateY(-3px)
+            translateZ(8px);
+    }
+
+    #screen-journey .polaroid:hover img {
+        transform:
+            translateZ(6px);
+    }
+
+}
+/* =========================================================
+   JOURNEY — BOOK CENTER FOLD
+   Step 1
+========================================================= */
+
+#screen-journey .photo-grid {
+    position: relative;
+}
+
+
+/* LIPATAN BUKU DI TENGAH */
+
+#screen-journey .photo-grid::before {
+    content: "";
+
+    position: absolute;
+
+    top: -10px;
+    bottom: -10px;
+
+    left: 50%;
+
+    width: 2px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(180, 150, 140, 0.12) 8%,
+            rgba(180, 150, 140, 0.28) 50%,
+            rgba(180, 150, 140, 0.12) 92%,
+            transparent 100%
+        );
+
+    box-shadow:
+        1px 0 0
+        rgba(255, 255, 255, 0.7),
+
+        -1px 0 0
+        rgba(150, 120, 110, 0.05);
+
+    pointer-events: none;
+
+    z-index: 5;
+}
+
+
+/* BAYANGAN HALUS DI SEKITAR LIPATAN */
+
+#screen-journey .photo-grid::after {
+    content: "";
+
+    position: absolute;
+
+    top: -5px;
+    bottom: -5px;
+
+    left: 50%;
+
+    width: 28px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            to right,
+            transparent,
+            rgba(120, 95, 85, 0.035),
+            transparent
+        );
+
+    pointer-events: none;
+
+    z-index: 4;
+} 
+/* =========================================================
+   JOURNEY — CENTER STITCH
+========================================================= */
+
+#screen-journey .photo-grid {
+    position: relative;
+}
+
+
+/* BENANG TENGAH */
+
+#screen-journey .photo-grid::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    left: 50%;
+
+    width: 1px;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(150, 120, 110, 0.28) 8%,
+            rgba(150, 120, 110, 0.28) 92%,
+            transparent
+        );
+
+    pointer-events: none;
+
+    z-index: 6;
+}
+
+
+/* STRAWBERRY MANIK-MANIK */
+
+#screen-journey .photo-grid::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    left: 50%;
+
+    width: 10px;
+
+    transform:
+        translateX(-50%);
+
+    pointer-events: none;
+
+    z-index: 7;
+
+    background-image:
+        url("strawberry.svg"),
+        url("strawberry.svg"),
+        url("strawberry.svg"),
+        url("strawberry.svg"),
+        url("strawberry.svg"),
+        url("strawberry.svg");
+
+    background-repeat:
+        no-repeat,
+        no-repeat,
+        no-repeat,
+        no-repeat,
+        no-repeat,
+        no-repeat;
+
+    background-position:
+        center 8%,
+        center 25%,
+        center 42%,
+        center 59%,
+        center 76%,
+        center 93%;
+
+    background-size:
+        8px auto;
+
+    filter:
+        drop-shadow(
+            0 1px 2px
+            rgba(80, 60, 50, 0.12)
+        );
+}
+/* =========================================================
+   JOURNEY — LEFT & RIGHT SIDES
+========================================================= */
+
+/* FOTO SISI KIRI */
+
+#screen-journey .photo-1,
+#screen-journey .photo-3,
+#screen-journey .photo-5,
+#screen-journey .photo-7,
+#screen-journey .photo-9,
+#screen-journey .photo-11 {
+    --journey-side: left;
+}
+
+
+/* FOTO SISI KANAN */
+
+#screen-journey .photo-2,
+#screen-journey .photo-4,
+#screen-journey .photo-6,
+#screen-journey .photo-8,
+#screen-journey .photo-10,
+#screen-journey .photo-12 {
+    --journey-side: right;
+}
+/* =========================================================
+   JOURNEY — PHOTO SLIDE IN
+   Preserve scrapbook rotation
+========================================================= */
+
+
+/* FOTO KIRI */
+
+#screen-journey .photo-1,
+#screen-journey .photo-3,
+#screen-journey .photo-5,
+#screen-journey .photo-7,
+#screen-journey .photo-9,
+#screen-journey .photo-11 {
+
+    animation:
+        journeySlideLeft
+        1s
+        cubic-bezier(.2,.75,.25,1)
+        both;
+}
+
+
+/* FOTO KANAN */
+
+#screen-journey .photo-2,
+#screen-journey .photo-4,
+#screen-journey .photo-6,
+#screen-journey .photo-8,
+#screen-journey .photo-10,
+#screen-journey .photo-12 {
+
+    animation:
+        journeySlideRight
+        1s
+        cubic-bezier(.2,.75,.25,1)
+        both;
+}
+
+
+/* =========================================================
+   KIRI — HANYA BERGERAK
+   ROTASI ASLI TETAP
+========================================================= */
+
+@keyframes journeySlideLeft {
+
+    from {
+        opacity: 0;
+
+        translate:
+            -100vw 0;
+    }
+
+    to {
+        opacity: 1;
+
+        translate:
+            0 0;
+    }
+
+}
+
+
+/* =========================================================
+   KANAN — HANYA BERGERAK
+   ROTASI ASLI TETAP
+========================================================= */
+
+@keyframes journeySlideRight {
+
+    from {
+        opacity: 0;
+
+        translate:
+            100vw 0;
+    }
+
+    to {
+        opacity: 1;
+
+        translate:
+            0 0;
+    }
+
+}
+/* =========================================================
+   JOURNEY — STAGGERED PHOTO ENTRY
+========================================================= */
+
+
+/* ROW 1 */
+
+#screen-journey .photo-1,
+#screen-journey .photo-2 {
+    animation-delay: 0s;
+}
+
+
+/* ROW 2 */
+
+#screen-journey .photo-3,
+#screen-journey .photo-4 {
+    animation-delay: 0.15s;
+}
+
+
+/* ROW 3 */
+
+#screen-journey .photo-5,
+#screen-journey .photo-6 {
+    animation-delay: 0.30s;
+}
+
+
+/* ROW 4 */
+
+#screen-journey .photo-7,
+#screen-journey .photo-8 {
+    animation-delay: 0.45s;
+}
+
+
+/* ROW 5 */
+
+#screen-journey .photo-9,
+#screen-journey .photo-10 {
+    animation-delay: 0.60s;
+}
+
+
+/* ROW 6 */
+
+#screen-journey .photo-11,
+#screen-journey .photo-12 {
+    animation-delay: 0.75s;
+}
+
+/* =====================================================
+   CINEMATIC OPENING — NEW 3D STAGE
+===================================================== */
+
+#screen-opening {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    perspective: 1200px;
+}
+
+/* BACKGROUND SCENE */
+.opening-scene {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(255, 173, 190, 0.45),
+            transparent 45%
+        ),
+        radial-gradient(
+            circle at 85% 85%,
+            rgba(170, 202, 145, 0.45),
+            transparent 45%
+        ),
+        linear-gradient(
+            135deg,
+            #fffaf7,
+            #fff1f4,
+            #f1f7e9
+        );
+}
+
+.scene-glow {
+    position: absolute;
+    width: 40vw;
+    height: 40vw;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.5;
+}
+
+.scene-glow-pink {
+    top: 10%;
+    left: -10%;
+    background: #f4b6c4;
+}
+
+.scene-glow-green {
+    right: -10%;
+    bottom: 10%;
+    background: #b8d09c;
+}
+
+.scene-decor {
+    position: absolute;
+    width: 55px;
+    height: auto;
+    opacity: 0.7;
+    object-fit: contain;
+}
+
+.scene-strawberry {
+    top: 14%;
+    left: 9%;
+    transform: rotate(-18deg);
+}
+
+.scene-matcha {
+    right: 9%;
+    top: 20%;
+    width: 65px;
+    transform: rotate(25deg);
+}
+
+.scene-flower {
+    left: 13%;
+    bottom: 15%;
+    width: 48px;
+    transform: rotate(12deg);
+}
+
+.scene-sparkle {
+    right: 15%;
+    bottom: 18%;
+    width: 35px;
+}
+
+/* 3D STAGE */
+.opening-stage {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: 100%;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+}
+
+/* COUPLE LAYER */
+.opening-couple-layer {
+    position: absolute;
+    z-index: 0;
+    top: 13%;
+    left: 50%;
+    width: min(42vw, 190px);
+    transform:
+        translateX(-50%)
+        translateZ(-100px)
+        scale(0.85);
+    transform-style: preserve-3d;
+    pointer-events: none;
+
+}
+
+.opening-couple {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 16px 20px rgba(90, 70, 70, 0.12));
+}
+
+/* COVER */
+#screen-opening .opening-cover {
+    position: relative;
+    z-index: 2;
+    transform-style: preserve-3d;
+}
+
+#screen-opening .opening-cover-inner {
+    position: relative;
+    transform-style: preserve-3d;
+}
+
+/* TEXT DEPTH */
+#screen-opening .cover-top-text,
+#screen-opening .cover-title,
+#screen-opening .cover-subtitle,
+#screen-opening .tap-text,
+#screen-opening .cover-signature,
+#screen-opening .cover-corner {
+    position: relative;
+    transform: translateZ(25px);
+}
+
+/* ENVELOPE DEPTH */
+#screen-opening .envelope-button {
+    position: relative;
+    z-index: 3;
+    transform: translateZ(45px);
+    cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .opening-couple-layer {
+        top: 12%;
+        width: min(46vw, 165px);
+    }
+
+    .scene-decor {
+        width: 42px;
+    }
+
+    .scene-matcha {
+        width: 52px;
+    }
+
+    .scene-flower {
+        width: 38px;
+    }
+
+    .scene-sparkle {
+        width: 28px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #screen-opening *,
+    #screen-opening *::before,
+    #screen-opening *::after {
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Integration: the cinematic opening is its own screen before the old menu system. */
+body {
+    position: relative;
+}
+
+main.scene {
+    display: block;
+}
+
+main.scene.scene-hidden {
+    display: none;
+}
+
+.screen {
+    position: relative;
+}
+  /* =========================================================
+   MOMENT — ADDITIONAL STYLES
+   Strawberry × Matcha
+   ========================================================= */
+
+#screen-moment.moment-screen {
+    height: 100vh;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 88px 18px 60px;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
+
+#screen-moment.moment-screen .moment-page {
+    width: min(100%, 520px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+/* Header */
+
+.moment-heading {
+    text-align: center;
+    padding: 4px 14px 10px;
+}
+
+.moment-heading .moment-kicker {
+    margin: 0 0 7px;
+    color: #829d63;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.moment-heading h1 {
+    margin: 0;
+    color: #3f3834;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 8vw, 2.65rem);
+    line-height: 1.05;
+}
+
+.moment-heading p {
+    margin: 10px auto 0;
+    max-width: 370px;
+    color: rgba(63, 56, 52, 0.68);
+    font-size: 0.86rem;
+    line-height: 1.65;
+}
+
+/* Generic Moment card */
+
+.moment-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   01 — A VOICE FROM ME
+   ========================================================= */
+
+.moment-voice {
+    padding: 28px 22px 24px;
+    background:
+        radial-gradient(
+            circle at 92% 8%,
+            rgba(255, 173, 190, 0.30),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 8% 92%,
+            rgba(170, 202, 145, 0.30),
+            transparent 36%
+        ),
+        rgba(255, 250, 247, 0.94);
+    border: 1px solid rgba(185, 79, 109, 0.12);
+    box-shadow: 0 18px 45px rgba(80, 60, 50, 0.12);
+}
+
+.moment-card-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 13px;
+    color: #b94f6d;
+    font-size: 0.70rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.moment-voice h2,
+.moment-bedtime h2 {
+    margin: 0;
+    color: #3f3834;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem;
+    line-height: 1.15;
+}
+
+.moment-description {
+    margin: 9px 0 20px;
+    color: rgba(63, 56, 52, 0.68);
+    font-size: 0.84rem;
+    line-height: 1.65;
+}
+
+/* Audio player */
+
+.moment-audio {
+    width: 100%;
+    display: block;
+    margin: 0;
+    border-radius: 16px;
+}
+
+.moment-audio::-webkit-media-controls-panel {
+    background: rgba(255, 241, 244, 0.96);
+}
+
+/* Play instruction */
+
+.moment-audio-note {
+    margin: 12px 2px 0;
+    color: rgba(63, 56, 52, 0.54);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* =========================================================
+   02 — BEFORE YOU SLEEP
+   ========================================================= */
+
+.moment-bedtime {
+    padding: 27px 22px 24px;
+    background:
+        radial-gradient(
+            circle at 84% 14%,
+            rgba(255, 255, 255, 0.25),
+            transparent 5%
+        ),
+        radial-gradient(
+            circle at 72% 28%,
+            rgba(255, 255, 255, 0.16),
+            transparent 3%
+        ),
+        radial-gradient(
+            circle at 20% 24%,
+            rgba(255, 255, 255, 0.16),
+            transparent 3%
+        ),
+        linear-gradient(
+            145deg,
+            #536044 0%,
+            #687855 48%,
+            #829d63 100%
+        );
+    border: 1px solid rgba(130, 157, 99, 0.22);
+    box-shadow: 0 18px 45px rgba(71, 86, 53, 0.17);
+}
+
+.moment-bedtime .moment-card-label {
+    color: rgba(255, 250, 247, 0.78);
+}
+
+.moment-bedtime h2 {
+    color: #fffaf7;
+}
+
+.moment-bedtime .moment-description {
+    color: rgba(255, 250, 247, 0.76);
+}
+
+.moment-bedtime .moment-audio-note {
+    color: rgba(255, 250, 247, 0.62);
+}
+
+.moment-moon {
+    position: absolute;
+    top: -32px;
+    right: -24px;
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    background: rgba(255, 250, 247, 0.12);
+    box-shadow:
+        -13px 5px 0 rgba(83, 96, 68, 0.82);
+    pointer-events: none;
+}
+
+/* =========================================================
+   03 — A LITTLE REMINDER
+   Paper / handwritten feeling
+   ========================================================= */
+
+.moment-reminder {
+    padding: 30px 24px 28px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.97),
+            rgba(255, 250, 247, 0.98)
+        );
+    border: 1px solid rgba(63, 56, 52, 0.09);
+    box-shadow:
+        0 15px 38px rgba(80, 60, 50, 0.10),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.moment-reminder::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 74px;
+    height: 1px;
+    background: rgba(130, 157, 99, 0.20);
+    box-shadow:
+        0 28px 0 rgba(130, 157, 99, 0.12),
+        0 56px 0 rgba(130, 157, 99, 0.12),
+        0 84px 0 rgba(130, 157, 99, 0.12),
+        0 112px 0 rgba(130, 157, 99, 0.12),
+        0 140px 0 rgba(130, 157, 99, 0.12),
+        0 168px 0 rgba(130, 157, 99, 0.12);
+    pointer-events: none;
+}
+
+.moment-letter-content {
+    position: relative;
+    z-index: 1;
+}
+
+.moment-reminder h2,
+.moment-hard-days h2 {
+    margin: 0 0 17px;
+    color: #3f3834;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+}
+
+.moment-letter-text {
+    margin: 0;
+    color: #514945;
+    font-size: 0.88rem;
+    line-height: 1.95;
+}
+
+/* =========================================================
+   04 — FOR THE HARD DAYS
+   Envelope
+   ========================================================= */
+
+.moment-hard-days {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+}
+
+.moment-envelope {
+    position: relative;
+    padding: 30px 23px 28px;
+    border-radius: 24px;
+    background:
+        linear-gradient(
+            145deg,
+            #fff5f7,
+            #f7f1e9
+        );
+    border: 1px solid rgba(185, 79, 109, 0.12);
+    box-shadow: 0 17px 42px rgba(80, 60, 50, 0.11);
+}
+
+.moment-envelope::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.moment-envelope-seal {
+    position: absolute;
+    top: 19px;
+    right: 19px;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(185, 79, 109, 0.12);
+    color: #b94f6d;
+    font-size: 1rem;
+}
+
+.moment-hard-days h2 {
+    padding-right: 50px;
+}
+
+.moment-signature {
+    margin-top: 22px;
+    color: #829d63;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+/* =========================================================
+   Missing audio state
+   ========================================================= */
+
+.moment-audio-missing {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 15px;
+    border-radius: 15px;
+    background: rgba(255, 250, 247, 0.10);
+    border: 1px dashed rgba(255, 250, 247, 0.25);
+    color: rgba(255, 250, 247, 0.76);
+    font-size: 0.76rem;
+    line-height: 1.5;
+}
+
+.moment-audio-missing.dark {
+    background: rgba(130, 157, 99, 0.08);
+    border-color: rgba(130, 157, 99, 0.18);
+    color: rgba(63, 56, 52, 0.60);
+}
+
+/* =========================================================
+   Moment toast
+   ========================================================= */
+
+.moment-love-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 30px;
+    z-index: 99999;
+    max-width: calc(100vw - 40px);
+    padding: 11px 19px;
+    border-radius: 30px;
+    box-sizing: border-box;
+    background: rgba(255, 250, 247, 0.96);
+    border: 1px solid rgba(201, 78, 112, 0.15);
+    color: #b94f6d;
+    font-size: 0.80rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 10px 28px rgba(80, 60, 50, 0.16);
+    opacity: 0;
+    transform: translateX(-50%) translateY(18px);
+    pointer-events: none;
+    transition:
+        opacity 0.28s ease,
+        transform 0.28s ease;
+}
+
+.moment-love-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    #screen-moment.moment-screen {
+        padding:
+            82px
+            14px
+            45px;
+    }
+
+    #screen-moment.moment-screen .moment-page {
+        gap: 18px;
+    }
+
+    .moment-heading {
+        padding-bottom: 5px;
+    }
+
+    .moment-voice,
+    .moment-bedtime {
+        padding: 24px 18px 21px;
+        border-radius: 23px;
+    }
+
+    .moment-reminder {
+        padding: 27px 20px 25px;
+        border-radius: 23px;
+    }
+
+    .moment-envelope {
+        padding: 27px 19px 25px;
+        border-radius: 22px;
+    }
+
+    .moment-moon {
+        width: 88px;
+        height: 88px;
+        top: -25px;
+        right: -20px;
+    }
+
+    .moment-love-toast {
+        bottom: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .moment-love-toast {
+        transition: none;
+    }
+  }
+  /* =========================================================
+   GIFT — ONE MORE THING
+========================================================= */
+
+#screen-gift.gift-screen {
+    position: relative;
+
+    min-height: 100vh;
+    height: 100vh;
+
+    align-items: flex-start;
+    justify-content: center;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 88px 18px 70px;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+#screen-gift.gift-screen .sub-content {
+    width: min(100%, 520px);
+
+    margin: auto;
+
+    text-align: center;
+}
+
+#screen-gift.gift-screen h1 {
+    margin-bottom: 28px;
+
+    color: #b94f6d;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+
+    font-size: clamp(3rem, 12vw, 4.8rem);
+    line-height: 0.95;
+}
+
+
+/* MAIN GIFT CARD */
+
+.gift-card {
+    position: relative;
+
+    width: 100%;
+
+    padding: 42px 28px 38px;
+
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.88),
+            rgba(255, 255, 255, 0.68)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.9);
+
+    box-shadow:
+        0 20px 45px rgba(80, 60, 50, 0.10);
+
+    overflow: hidden;
+}
+
+
+/* soft matcha glow */
+
+.gift-card::before {
+    content: '';
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -90px;
+    top: -90px;
+
+    border-radius: 50%;
+
+    background: rgba(170, 202, 145, 0.22);
+
+    filter: blur(5px);
+
+    pointer-events: none;
+}
+
+
+/* soft strawberry glow */
+
+.gift-card::after {
+    content: '';
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    left: -80px;
+    bottom: -75px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 173, 190, 0.20);
+
+    filter: blur(5px);
+
+    pointer-events: none;
+}
+
+
+/* little heart */
+
+.gift-heart {
+    position: relative;
+    z-index: 2;
+
+    width: 68px;
+    height: 68px;
+
+    margin: 0 auto 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fde0e6,
+            #e7efd8
+        );
+
+    color: #b94f6d;
+
+    font-size: 2rem;
+
+    box-shadow:
+        0 8px 20px rgba(185, 79, 109, 0.10);
+}
+
+
+.gift-card-label {
+    position: relative;
+    z-index: 2;
+
+    margin-bottom: 22px;
+
+    color: #81766f;
+
+    font-size: 0.72rem;
+
+    letter-spacing: 0.24em;
+
+    text-transform: uppercase;
+}
+
+
+.gift-message {
+    position: relative;
+    z-index: 2;
+
+    color: #403a37;
+
+    font-size: 0.95rem;
+
+    line-height: 1.9;
+
+    text-align: left;
+}
+
+
+.gift-message strong {
+    color: #b94f6d;
+
+    font-weight: 700;
+}
+
+
+.gift-divider {
+    position: relative;
+    z-index: 2;
+
+    width: 55px;
+    height: 1px;
+
+    margin: 28px auto;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(185, 79, 109, 0.45),
+            transparent
+        );
+}
+
+
+.gift-final {
+    position: relative;
+    z-index: 2;
+
+    margin: 0;
+
+    color: #756b65;
+
+    font-size: 0.82rem;
+
+    line-height: 1.7;
+
+    letter-spacing: 0.03em;
+}
+
+
+.gift-final em {
+    color: #b94f6d;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 1rem;
+}
+
+
+@media (max-width: 480px) {
+
+    #screen-gift.gift-screen {
+        padding:
+            82px
+            16px
+            55px;
+    }
+
+    #screen-gift.gift-screen h1 {
+        font-size: clamp(2.8rem, 13vw, 4rem);
+    }
+
+    .gift-card {
+        padding:
+            38px
+            23px
+            34px;
+    }
+
+}
+  /* =========================================================
+   MENU — NEXT / FINAL SURPRISE
+========================================================= */
+
+#screen-menu {
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+#screen-menu .menu-content {
+    padding-bottom: 35px;
+}
+
+.menu-next {
+    width: 100%;
+    max-width: 420px;
+    margin: 30px auto 0;
+    text-align: center;
+}
+
+.menu-next-hint {
+    margin: 0 0 15px;
+
+    color: #81766f;
+
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.76rem;
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+}
+
+.menu-next-button {
+    min-width: 145px;
+
+    padding: 13px 24px;
+
+    border: 1px solid rgba(185, 79, 109, 0.16);
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.90),
+            rgba(247, 241, 232, 0.78)
+        );
+
+    color: #b94f6d;
+
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    letter-spacing: 0.08em;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 9px 22px rgba(100, 70, 60, 0.10);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.menu-next-button:active {
+    transform: scale(0.94);
+}
+
+@media (hover: hover) and (pointer: fine) {
+
+    .menu-next-button:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 13px 28px rgba(100, 70, 60, 0.14);
+    }
+
+}
+
+
+/* =========================================================
+   FINAL SURPRISE
+========================================================= */
+
+#screen-finale.finale-screen {
+    position: relative;
+
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+
+    padding: 20px;
+
+    overflow: hidden;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(255, 173, 190, 0.52),
+            transparent 36%
+        ),
+        radial-gradient(
+            circle at 85% 82%,
+            rgba(170, 202, 145, 0.52),
+            transparent 40%
+        ),
+        linear-gradient(
+            135deg,
+            #fffaf7 0%,
+            #fff1f4 50%,
+            #f1f7e9 100%
+        );
+
+    box-sizing: border-box;
+}
+
+#screen-finale.finale-screen.active {
+    display: flex;
+}
+
+
+/* CENTER GLOW */
+
+.finale-glow {
+    position: absolute;
+
+    width: 240px;
+    height: 240px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.92) 0%,
+            rgba(255, 206, 218, 0.32) 40%,
+            rgba(190, 213, 163, 0.12) 65%,
+            transparent 74%
+        );
+
+    filter: blur(3px);
+
+    opacity: 0;
+
+    transition:
+        opacity 1.2s ease,
+        transform 1.5s ease;
+
+    pointer-events: none;
+}
+
+.finale-screen.is-burst .finale-glow {
+    opacity: 1;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1.55);
+}
+
+
+/* =========================================================
+   GIFT BOX
+========================================================= */
+
+.finale-gift {
+    position: relative;
+    z-index: 5;
+
+    width: 170px;
+    height: 150px;
+
+    opacity: 0;
+
+    transform:
+        translateY(35px)
+        scale(0.72);
+
+    transition:
+        opacity 0.65s ease,
+        transform 0.85s cubic-bezier(.2,.8,.2,1);
+}
+
+.finale-screen.is-ready .finale-gift {
+    opacity: 1;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+.finale-box {
+    position: absolute;
+
+    left: 50%;
+    bottom: 0;
+
+    width: 150px;
+    height: 105px;
+
+    transform: translateX(-50%);
+
+    border-radius: 8px 8px 13px 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5c1cc 0%,
+            #e9a7b8 55%,
+            #d98da3 100%
+        );
+
+    box-shadow:
+        0 22px 38px rgba(120, 80, 70, 0.18);
+}
+
+.finale-box::before {
+    content: '';
+
+    position: absolute;
+
+    left: 50%;
+    top: 0;
+
+    width: 27px;
+    height: 100%;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            #8fa875,
+            #b5c99a,
+            #8fa875
+        );
+}
+
+.finale-box::after {
+    content: '';
+
+    position: absolute;
+
+    left: 0;
+    top: 34px;
+
+    width: 100%;
+    height: 25px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #9aad7e,
+            #b9cb9f,
+            #91a973
+        );
+}
+
+
+/* GIFT LID */
+
+.finale-lid {
+    position: absolute;
+
+    z-index: 4;
+
+    left: 50%;
+    top: 21px;
+
+    width: 170px;
+    height: 29px;
+
+    transform:
+        translateX(-50%)
+        rotate(0deg);
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f9ccd5,
+            #e9a6b7
+        );
+
+    box-shadow:
+        0 8px 16px rgba(100, 70, 60, 0.13);
+
+    transform-origin: 50% 90%;
+
+    transition:
+        transform 0.8s cubic-bezier(.2,.85,.25,1),
+        opacity 0.5s ease;
+}
+
+
+/* BOW */
+
+.finale-bow {
+    position: absolute;
+
+    z-index: 7;
+
+    left: 50%;
+    top: 5px;
+
+    width: 62px;
+    height: 32px;
+
+    transform: translateX(-50%);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.35s ease,
+        transform 0.8s cubic-bezier(.2,.85,.25,1);
+}
+
+.finale-bow::before,
+.finale-bow::after {
+    content: '';
+
+    position: absolute;
+
+    top: 0;
+
+    width: 30px;
+    height: 25px;
+
+    border-radius: 70% 20% 70% 20%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #91a974,
+            #b7c99b
+        );
+}
+
+.finale-bow::before {
+    left: 0;
+    transform: rotate(25deg);
+}
+
+.finale-bow::after {
+    right: 0;
+    transform: rotate(-25deg);
+}
+
+.finale-bow span {
+    position: absolute;
+
+    z-index: 2;
+
+    left: 50%;
+    top: 5px;
+
+    width: 17px;
+    height: 17px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background: #7f9966;
+}
+
+/* ANTICIPATION */
+
+.finale-screen.is-preburst .finale-gift {
+    animation: finaleAnticipation 1.35s ease-in-out both;
+}
+
+@keyframes finaleAnticipation {
+
+    0% {
+        transform:
+            translateY(0)
+            scale(1)
+            rotate(0deg);
+    }
+
+    20% {
+        transform:
+            translateY(-2px)
+            scale(1.015)
+            rotate(-1deg);
+    }
+
+    40% {
+        transform:
+            translateY(0)
+            scale(1.02)
+            rotate(1deg);
+    }
+
+    60% {
+        transform:
+            translateY(-3px)
+            scale(1.025)
+            rotate(-1.5deg);
+    }
+
+    80% {
+        transform:
+            translateY(0)
+            scale(1.03)
+            rotate(1deg);
+    }
+
+    100% {
+        transform:
+            translateY(0)
+            scale(1)
+            rotate(0deg);
+    }
+}
+/* OPEN */
+
+.finale-screen.is-burst .finale-lid {
+    transform:
+        translate(-50%, -92px)
+        rotate(-16deg);
+
+    opacity: 0;
+}
+
+.finale-screen.is-burst .finale-bow {
+    transform:
+        translate(-50%, -112px)
+        rotate(-18deg)
+        scale(0.8);
+
+    opacity: 0;
+}
+
+.finale-screen.is-burst .finale-box {
+    animation:
+        finaleBoxBurst
+        0.65s
+        cubic-bezier(.2,.75,.25,1)
+        both;
+}
+
+@keyframes finaleBoxBurst {
+
+    0% {
+        transform:
+            translateX(-50%)
+            scale(1);
+    }
+
+    25% {
+        transform:
+            translateX(-50%)
+            scale(1.08);
+    }
+
+    50% {
+        transform:
+            translateX(-50%)
+            scale(0.96);
+    }
+
+    100% {
+        transform:
+            translateX(-50%)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.finale-particles {
+    position: absolute;
+
+    z-index: 8;
+
+    left: 50%;
+    top: 50%;
+
+    width: 1px;
+    height: 1px;
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   BIG FINALE BURST
+========================================================= */
+
+.finale-particles {
+    position: absolute;
+    z-index: 8;
+
+    left: 50%;
+    top: 50%;
+
+    width: 1px;
+    height: 1px;
+
+    pointer-events: none;
+}
+
+/* BIG FLASH */
+
+.finale-screen::before {
+    content: '';
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.95);
+
+    transform: translate(-50%, -50%) scale(0);
+
+    opacity: 0;
+
+    z-index: 6;
+
+    pointer-events: none;
+}
+
+.finale-screen.is-burst::before {
+    animation: finaleFlash 1.2s ease-out both;
+}
+
+@keyframes finaleFlash {
+
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+
+    12% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(2);
+    }
+
+    45% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(7);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(13);
+    }
+}
+
+
+/* BURST RINGS */
+
+.finale-screen::after {
+    content: '';
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 80px;
+    height: 80px;
+
+    border: 2px solid rgba(185,79,109,0.32);
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%) scale(0);
+
+    opacity: 0;
+
+    z-index: 7;
+
+    pointer-events: none;
+}
+
+.finale-screen.is-burst::after {
+    animation: finaleRing 1.8s cubic-bezier(.15,.7,.2,1) both;
+}
+
+@keyframes finaleRing {
+
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+
+    15% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(7);
+    }
+}
+
+
+/* PARTICLES */
+
+.finale-particle {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    display: block;
+
+    font-size: var(--size);
+    color: var(--color);
+
+    opacity: 0;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.05)
+        rotate(0deg);
+
+    animation:
+        finaleParticleBurst
+        var(--duration)
+        cubic-bezier(.12,.72,.18,1)
+        var(--delay)
+        forwards;
+
+    will-change: transform, opacity;
+}
+
+@keyframes finaleParticleBurst {
+
+    0% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(0.05)
+            rotate(0deg);
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    22% {
+        opacity: 1;
+        transform:
+            translate(
+                calc(-50% + var(--x) * 0.45),
+                calc(-50% + var(--y) * 0.45)
+            )
+            scale(1.35)
+            rotate(var(--rotate));
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            translate(
+                calc(-50% + var(--x)),
+                calc(-50% + var(--y))
+            )
+            scale(0.65)
+            rotate(var(--rotate));
+    }
+}
+
+
+/* =========================================================
+   FINAL MESSAGE
+========================================================= */
+
+.finale-message {
+    position: absolute;
+
+    z-index: 20;
+
+    left: 50%;
+    top: 50%;
+
+    width: min(90%, 520px);
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.82);
+
+    opacity: 0;
+
+    text-align: center;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.9s ease,
+        transform 1s cubic-bezier(.2,.8,.2,1);
+}
+
+.finale-screen.is-message .finale-message {
+    opacity: 1;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+}
+
+.finale-message-top {
+    margin-bottom: 9px;
+
+    color: #81766f;
+
+    font-family: 'DM Sans', sans-serif;
+
+    font-size: 0.78rem;
+
+    letter-spacing: 0.24em;
+
+    text-transform: uppercase;
+}
+
+.finale-message h1 {
+    margin: 0;
+
+    color: #b94f6d;
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: clamp(3rem, 14vw, 5.6rem);
+
+    font-weight: 500;
+
+    font-style: italic;
+
+    line-height: 0.95;
+
+    text-shadow:
+        0 7px 20px rgba(185, 79, 109, 0.12);
+}
+
+.finale-message h2 {
+    margin: 4px 0 22px;
+
+    color: #b94f6d;
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: clamp(3.6rem, 17vw, 7rem);
+
+    font-weight: 600;
+
+    line-height: 0.9;
+
+    letter-spacing: 0.01em;
+}
+
+.finale-message p {
+    margin: 0;
+
+    color: #786d68;
+
+    font-family: 'DM Sans', sans-serif;
+
+    font-size: 0.78rem;
+
+    letter-spacing: 0.08em;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 480px) {
+
+    .menu-next {
+        margin-top: 25px;
+    }
+
+    .menu-next-hint {
+        font-size: 0.72rem;
+    }
+
+    .menu-next-button {
+        min-width: 135px;
+    }
+
+    .finale-gift {
+        transform:
+            translateY(35px)
+            scale(0.65);
+    }
+
+    .finale-screen.is-ready .finale-gift {
+        transform:
+            translateY(0)
+            scale(0.82);
+    }
+
+    .finale-message h1 {
+        font-size: 3rem;
+    }
+
+    .finale-message h2 {
+        font-size: 4rem;
+    }
+}
+
+
+/* REDUCE MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .finale-screen *,
+    .finale-screen *::before,
+    .finale-screen *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+      }
+</style>
+  
+</head>
+<body>
+  <main class="scene" id="scene">
+    <div class="glow glow-pink"></div>
+    <div class="glow glow-green"></div>
+
+    <div class="background-title" id="backgroundTitle">
+      <small>a little something for</small>
+      <h1>b'day ucii!!</h1>
+    </div>
+
+    <div class="decor decor-a">
+      <img src="strawberry.svg" alt="">
+    </div>
+
+    <div class="decor decor-b">
+      <img src="matcha-leaf.svg" alt="">
+    </div>
+
+    <div class="decor decor-c">
+      <img src="flower.svg" alt="">
+    </div>
+
+    <div class="decor decor-d">
+      <img src="sparkle.svg" alt="">
+    </div>
+
+    <section class="world" id="world">
+      <div class="couple" id="couple">
+        <img src="couple-sweet.svg" alt="Stiker couple">
+      </div>
+
+      <div class="envelope" id="envelope" role="button"
+           tabindex="0" aria-label="Buka amplop">
+        <div class="envelope-back"></div>
+
+        <div class="letter">
+          <small>for someone special</small>
+          <h2>Dear My Strawberry,</h2>
+          <p>A little world made just for you.</p>
+          <p>from ur coolest bf ever🫰🏻</p>
+        </div>
+
+        <div class="envelope-front"></div>
+        <div class="flap"></div>
+        <div class="seal" id="seal">♡</div>
+      </div>
+
+      <div class="instruction" id="instruction">
+        tap to open <span>♡</span>
+      </div>
+    </section>
+
+    <button class="replay" id="replay" type="button">↻ Replay</button>
+  </main>
+
+  
+<!-- STRAWBERRY × MATCHA LOADING -->
+<div class="love-loading" id="loveLoading" aria-hidden="true">
+    <span class="loading-heart one">♡</span>
+    <span class="loading-heart two">✦</span>
+
+    <div class="loading-content">
+        <div class="loading-couple-track">
+            <img
+                src="couple-sweet.svg"
+                class="loading-couple"
+                id="loadingCouple"
+                alt=""
+            >
+        </div>
+
+        <h2 class="loading-title">
+            Preparing your little surprise
+        </h2>
+
+        <p class="loading-caption">
+            A little sweetness, just for you ♡
+        </p>
+
+        <div
+            class="loading-track"
+            role="progressbar"
+            aria-label="Loading surprise"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+            id="loadingTrack"
+        >
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+    </div>
+</div>
+
+
+    <section id="screen-menu" class="screen">
+
+    <div class="menu-content">
+
+            <p class="small-text">
+                Strawberry meets Matcha
+            </p>
+
+            <h1>
+                Choose Your Surprise
+            </h1>
+
+            <div class="menu-grid">
+
+                <!-- JOURNEY -->
+                <button
+                    class="menu-card"
+                    onclick="showScreen('screen-journey')"
+                >
+
+                    <div class="menu-icon strawberry-icon">
+                        🍓
+                    </div>
+
+                    <span>
+                        Journey
+                    </span>
+
+                    <small>
+                        our little story
+                    </small>
+
+                </button>
+
+                <!-- MOMENT -->
+                <button
+                    class="menu-card"
+                    onclick="showScreen('screen-moment')"
+                >
+
+                    <div class="menu-icon matcha-icon">
+                        🍵
+                    </div>
+
+                    <span>
+                        Moment
+                    </span>
+
+                    <small>
+                        something from me
+                    </small>
+
+                </button>
+
+                <!-- PLAYLIST -->
+                <button
+                    class="menu-card"
+                    onclick="showScreen('screen-playlist')"
+                >
+
+                    <div class="menu-icon vinyl-icon">
+                        ♪
+                    </div>
+
+                    <span>
+                        Playlist
+                    </span>
+
+                    <small>
+                        songs for us
+                    </small>
+
+                </button>
+
+                <!-- GIFT -->
+                <button
+                    class="menu-card"
+                    onclick="showScreen('screen-gift')"
+                >
+
+                    <div class="menu-icon gift-icon">
+                        ♡
+                    </div>
+
+                    <span>
+                        Gift
+                    </span>
+
+                    <small>
+                        one more thing
+                    </small>
+
+                </button>
+
+            </div>
+
+
+            <!-- NEXT — FINAL SURPRISE -->
+
+            <div class="menu-next">
+
+                <p class="menu-next-hint">
+                    satu persatu duluu yaa...<br>
+                    ada kejutan lain yang menunggu di akhir ♡
+                </p>
+
+                <button
+                    type="button"
+                    class="menu-next-button"
+                    onclick="showScreen('screen-finale')"
+                >
+                    NEXT →
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 3 — JOURNEY
+    ====================================================== -->
+
+    <section id="screen-journey" class="screen sub-screen">
+
+        <!-- JOURNEY DECORATIONS -->
+        <div
+            class="journey-decor"
+            aria-hidden="true"
+        >
+
+            <img
+                src="strawberry.svg"
+                class="decor-strawberry decor-1"
+                alt=""
+            >
+
+            <img
+                src="matcha-leaf.svg"
+                class="decor-matcha decor-2"
+                alt=""
+            >
+
+            <img
+                src="flower.svg"
+                class="decor-flower decor-3"
+                alt=""
+            >
+
+            <img
+                src="sparkle.svg"
+                class="decor-sparkle decor-4"
+                alt=""
+            >
+
+            <img
+                src="bow.svg"
+                class="decor-bow decor-5"
+                alt=""
+            >
+
+        </div>
+
+        <!-- BACK BUTTON -->
+        <button
+            class="back-button"
+            onclick="showScreen('screen-menu')"
+        >
+            BACK ◄
+        </button>
+
+        <!-- JOURNEY CONTENT -->
+        <div class="journey-content">
+
+            <!-- LOWER DECORATIONS -->
+            <img
+                src="flower.svg"
+                class="decor-6"
+                alt=""
+            >
+
+            <img
+                src="strawberry.svg"
+                class="decor-7"
+                alt=""
+            >
+
+            <img
+                src="matcha-leaf.svg"
+                class="decor-8"
+                alt=""
+            >
+
+            <p class="small-text">
+                a little collection of us
+            </p>
+
+            <h1>
+                Our Journey
+            </h1>
+
+            <p class="journey-intro">
+                Beberapa cerita kecil yang pernah kita lewati,
+                dan masih banyak cerita yang ingin kita buat.
+            </p>
+
+            <!-- PHOTO GRID -->
+            <div class="photo-grid">
+
+                <!-- PHOTO 1 -->
+                <div class="polaroid photo-1">
+
+                    <div class="washi-tape pink tape-top-center"></div>
+
+                    <img
+                        src="photo1.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        our beginning
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 2 -->
+                <div class="polaroid photo-2">
+
+                    <img
+                        src="photo2.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        little moments
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 3 -->
+                <div class="polaroid photo-3">
+
+                    <img
+                        src="photo3.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        just us
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 4 -->
+                <div class="polaroid photo-4">
+
+                    <div class="washi-tape cream tape-top-left"></div>
+
+                    <img
+                        src="photo4.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        one of my favorites
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 5 -->
+                <div class="polaroid photo-5">
+
+                    <img
+                        src="photo5.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        another little story
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 6 -->
+                <div class="polaroid photo-6">
+
+                    <img
+                        src="photo6.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        you &amp; me
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 7 -->
+                <div class="polaroid photo-7">
+
+                    <div class="washi-tape ivory tape-top-right"></div>
+
+                    <img
+                        src="photo7.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        somewhere in between
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 8 -->
+                <div class="polaroid photo-8">
+
+                    <img
+                        src="photo8.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        still my favorite
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 9 -->
+                <div class="polaroid photo-9">
+
+                    <img
+                        src="photo9.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        another memory
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 10 -->
+                <div class="polaroid photo-10">
+
+                    <img
+                        src="photo10.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        more of us
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 11 -->
+                <div class="polaroid photo-11">
+
+                    <img
+                        src="photo11.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        to remember
+                    </p>
+
+                </div>
+
+                <!-- PHOTO 12 -->
+                <div class="polaroid photo-12">
+
+                    <div class="washi-tape matcha tape-top-center"></div>
+
+                    <img
+                        src="photo12.jpg"
+                        alt="Our memory"
+                    >
+
+                    <p>
+                        to be continued...
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- JOURNEY ENDING -->
+            <div class="journey-ending">
+
+                <span>
+                    ♡
+                </span>
+
+                <p>
+                    And this is only a small part
+                    <br>
+                    of our story.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 4 — MOMENT
+    ====================================================== -->
+
+ <section id="screen-moment" class="screen sub-screen moment-screen">
+        <!-- BACK BUTTON -->
+        <button
+            class="back-button"
+            onclick="showScreen('screen-menu')"
+        >
+            BACK ◄
+        </button>
+
+        <div class="moment-page">
+
+    <!-- =================================================
+         MOMENT HEADER
+         ================================================= -->
+
+    <header class="moment-heading">
+
+        <p class="moment-kicker">
+            A little piece of me
+        </p>
+
+        <h1>
+            A Moment For You
+        </h1>
+
+        <p>
+            Ada beberapa hal yang ingin aku titipkan,
+            untuk kamu dengarkan dan baca pelan-pelan.
+        </p>
+
+    </header>
+
+
+    <!-- =================================================
+         01 — A VOICE FROM ME
+         ================================================= -->
+
+    <article class="moment-card moment-voice">
+
+        <div class="moment-card-label">
+            🎙️ A Voice From Me
+        </div>
+
+        <h2>
+            Dengerin yaww.
+        </h2>
+
+        <p class="moment-description">
+            Kalau ada satu hal yang pengen abgg sampaikan
+            tanpa terpotong apa-apa, mungkin ini.
+        </p>
+
+        <audio
+            class="moment-audio"
+            controls
+            preload="metadata"
+            data-moment-audio="voice"
+            src="lv_0_20261006044831.mp3"
+        >
+        </audio>
+
+        <p class="moment-audio-note">
+            Tekan play kalau ucii udaa siap dengerin. ♡
+        </p>
+
+    </article>
+
+
+    <!-- =================================================
+         02 — BEFORE YOU SLEEP
+         ================================================= -->
+
+<article class="moment-card moment-bedtime">
+
+    <span class="moment-moon"></span>
+
+    <div class="moment-card-label">
+        🌙 Before Ucii boboo
+    </div>
+
+    <h2>
+        abgg ceritain dongenggg kaya biasanyaa.
+    </h2>
+
+    <p class="moment-description">
+        Buat malam ketika ucii pengen ditemeninn
+        sebentar sebelum akhirnya memejamkan mata cantiknya itu.
+    </p>
+
+    <audio
+        class="moment-audio"
+        controls
+        preload="metadata"
+        data-moment-audio="bedtime"
+        src="lv_0_20261008115835.mp3">
+    </audio>
+
+    <p class="moment-audio-note">
+        Satu cerita kecil sebelumm sayangg bobokk.
+    </p>
+
+</article>
+
+
+    <!-- =================================================
+         03 — A LITTLE REMINDER
+         ================================================= -->
+
+    <article class="moment-card moment-reminder">
+
+        <div class="moment-letter-content">
+
+            <div class="moment-card-label">
+                💌 A Little Reminder
+            </div>
+
+            <h2>
+                Kalau cantikku inii butuh semangat,
+                baca ini.
+            </h2>
+
+            <p class="moment-letter-text">
+    sayangg, kalau akhir-akhir ini ucii ngerasa semuanya terlalu berat,
+    abang cuma mau ngingetin satu hal yaa... ucii ga harus selalu kuat
+    setiap waktuu.
+    <br><br>
+
+    kalau capee, istirahatt duluu gapapaa. jangan terlalu keras sama diri
+    ucii sendiri yaa. pelan-pelan ajaa, satu langkah kecil pun tetep
+    sebuah langkahh.
+    <br><br>
+
+    semangatt terus yaaa sayangg, jangann murungg murungg. abang selaluu
+    happy bngtt kalau liat ucii ceriaa, excitedd, dan senyumm. senyum ucii
+    maniss, makinn gemeshh nantii kalau simpul ujung bibirnyaa cemberutt,
+    HAHAHAHAHA.
+    <br><br>
+
+    <strong>SEMANGAAATTT MEMBARAAA SAYANGGGGKUUUUHHH 🔥</strong>
+    <br><br>
+
+    ingett ajaaa, selamaa adaa abanggg, duniaa beresss. kitaa bantaii
+    duniaa yangg ketcjam, pedass, kriukk inii. MWAHAHAHAHAHA.
+    <br><br>
+
+    btw, kapann call nyaa nihh?? XIXIXIXI
+    <br>
+    bercandaa sayangg, tapii bolehh dehh 🤭
+    <br><br>
+
+    kalau suatu hari ucii lupa seberapa jauhh ucii udah berjalan, baca ini
+    lagii yaa. i'm proud of youu, Sayangg!!
+    <br><br>
+
+    LOVE U UCIII CENTILL🤍
+            </p>
+
+        </div>
+
+    </article>
+
+
+    <!-- =================================================
+         04 — FOR THE HARD DAYS
+         ================================================= -->
+
+    <!-- =================================================
+     04 — FOR THE HARD DAYS
+     ================================================= -->
+
+<article class="moment-card moment-hard-days">
+
+    <div class="moment-envelope">
+
+        <div class="moment-envelope-seal">
+            ♡
+        </div>
+
+        <div class="moment-card-label">
+            🫂 Untuk hari di mana ucii butuhh hugg
+        </div>
+
+        <h2>
+            Kalau suatu hari semuanya terasa berat,
+            buka yang ini.
+        </h2>
+
+        <p class="moment-letter-text">
+
+            Ucii kesayangannkuuu, gapapaa yaa kalau hari ini
+            rasanya berat banget. Kalau sayangg lagi capee,
+            lagi banyak pikiran, atau semuanya terasa
+            numpuk, istirahat dulu gapapaa kok.
+            <br><br>
+
+            Ucii ga harus selalu kuat setiap saat,
+            ga harus selalu keliatan baik-baik ajaa.
+            Kalau emang lagi pengen nangiss,
+            nangiss ajaa gapapaa, keluarin semuanya
+            pelan-pelan. Jangan dipendem sendirian terus, okeyyy?? promise me!
+            <br><br>
+
+            Abang emng ga selalu tau seberapa berat
+            yang lagi Ucii hadapin, dan abang juga ga
+            mungkin bisa ngerasain semuanya dari posisi
+            abang. Tapi satu hal yang abang mau Ucii
+            inget, Ucii ga sendirian.
+            <br><br>
+
+            Kalau Ucii butuh tempat buat cerita,
+            butuh tempat buat ngeluh, atau cuma pengen
+            didengerin tanpa harus takut dihakimi,
+            abang ada di sini. Ucii boleh cerita apa ajaa,
+            ga harus selalu cerita hal yang baik-baik aja.
+            <br><br>
+
+            Ucii udah hebat banget bisa sampai sejauh ini.
+            Mungkin Ucii sering ngerasa masih banyak
+            kurangnya, masih banyak yang belum bisa Ucii
+            selesain, tapi coba lihat lagi berapa banyak
+            hal yang udah Ucii lewatin sampai sekarang.
+            <br><br>
+
+            Ucii masih bertahan, masih jalan, masih berusaha,
+            dan itu udah lebih dari cukup. Jadi kalau suatu
+            hari Ucii jatuh, itu bukan berarti Ucii lemah.
+            Mungkin Ucii cuma lagi capee dan butuh waktu
+            buat istirahat.
+            <br><br>
+
+            Kalau dunia lagi terasa jahat sama Ucii,
+            jangan sampai Ucii ikut jahat sama diri Ucii
+            sendiri yaa. Jangan terlalu nyalahin diri sendiri,
+            jangan ngerasa Ucii gagal cuma karena ada hari
+            dimana semuanya ga berjalan sesuai yang Ucii mau.
+            <br><br>
+
+            Ucii tetep berharga, bahkan di saat Ucii ngerasa
+            lagi ga punya apa-apa untuk dibanggakan.
+            Kehadiran Ucii itu berarti, bukan cuma buat abang,
+            tapi buat orang-orang yang sayang sama Ucii.
+            <br><br>
+
+            Hidup emng ga selamanya gampang. Bakal ada
+            masalah yang bikin capee, ada pertemuan yang
+            bikin sakit, ada keadaan yang kadang bikin Ucii
+            bertanya kenapa harus ngalamin semua ini.
+            <br><br>
+
+            Tapi mungkin ga semua jawabannya harus Ucii
+            temuin sekarang. Jalanin ajaa pelan-pelan,
+            satu per satu. Kalau hari ini belum bisa selesai,
+            gapapaa, besok kita coba lagi. Jangan maksain
+            diri buat menyelesaikan semuanya dalam satu waktu.
+            <br><br>
+
+            Jadi kalau suatu hari Ucii baca ini pas lagi
+            bener-bener capee, tarik napas yang dalem yaa.
+            Tenangin diri Ucii dulu. Ga perlu mikirin semuanya
+            sekaligus.
+            <br><br>
+
+            Masih ada hari esok yang harus sayangg lewatin
+            dengan senyum manis sayangg itu. Masih ada banyak
+            hal baik yang belum sayangg temuin, masih ada banyak
+            cerita yang belum selesai.
+            <br><br>
+
+            Abang s'lalu tau Ucii kuat, tapi abang juga tau Ucii
+            ga harus kuat sendirian terus. Kalau mau istirahat,
+            istirahatlah. Kalau mau nangiss, nangiss ajaa yakk.
+            Nanti kalau udah sedikit lebih tenang, bangkit lagi
+            pelan-pelan.
+            <br><br>
+
+            Everything gonna be okay honeyy, mungkin bukan sekarang,
+            tapi pasti akan ada jalan keluarnya. Roda itu
+            berputar, Ucii ga akan selamanya berada di hari
+            yang berat ini.
+            <br><br>
+
+            So proud of youu, Ucii cantikkk. Proud karena Sayangg
+            masih bertahan, masih mencoba, dan masih mau
+            melangkah walaupun kadang berat.
+            <br><br>
+
+            Jadi jangan dulu nyerah yaa sayangg.
+            Kalau hari ini belum cukup baik, gapapaa...
+            besok kita coba lagi.
+            <br><br>
+
+            Satu hari, satu langkah, pelan-pelan ajaa.
+            Abang di sini. 🫂💐🌹🤍
+
+        </p>
+
+    </div>
+
+</article>
+
+        </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 5 — PLAYLIST
+    ====================================================== -->
+
+    <section
+        id="screen-playlist"
+        class="screen sub-screen playlist-screen"
+    >
+
+        <!-- BACK BUTTON -->
+        <button
+            class="back-button playlist-back-button"
+            onclick="showScreen('screen-menu')"
+        >
+            BACK ◄
+        </button>
+
+        <!-- PLAYLIST WRAPPER -->
+        <div class="playlist-wrapper">
+
+            <!-- COUPLE STICKERS -->
+            <div
+                class="playlist-stickers"
+                aria-hidden="true"
+            >
+
+                <!-- SMALL PLAYLIST DECORATIONS -->
+                <div class="playlist-mini-decor">
+
+                    <img
+                        src="strawberry.svg"
+                        class="mini-decor mini-strawberry-1"
+                        alt=""
+                    >
+
+                    <img
+                        src="strawberry.svg"
+                        class="mini-decor mini-strawberry-2"
+                        alt=""
+                    >
+
+                    <img
+                        src="matcha-leaf.svg"
+                        class="mini-decor mini-matcha-1"
+                        alt=""
+                    >
+
+                    <img
+                        src="matcha-leaf.svg"
+                        class="mini-decor mini-matcha-2"
+                        alt=""
+                    >
+
+                    <img
+                        src="flower.svg"
+                        class="mini-decor mini-flower-1"
+                        alt=""
+                    >
+
+                    <img
+                        src="sparkle.svg"
+                        class="mini-decor mini-sparkle-1"
+                        alt=""
+                    >
+
+                    <img
+                        src="sparkle.svg"
+                        class="mini-decor mini-sparkle-2"
+                        alt=""
+                    >
+
+                    <img
+                        src="bow.svg"
+                        class="mini-decor mini-bow"
+                        alt=""
+                    >
+
+                </div>
+
+                <!-- SWEET -->
+                <img
+                    src="couple-sweet.svg"
+                    class="playlist-sticker sticker-sweet"
+                    alt=""
+                >
+
+                <!-- FUNNY -->
+                <img
+                    src="couple-funny.svg"
+                    class="playlist-sticker sticker-funny"
+                    alt=""
+                >
+
+                <!-- CHAOS -->
+                <img
+                    src="couple-chaos.svg"
+                    class="playlist-sticker sticker-chaos"
+                    alt=""
+                >
+
+            </div>
+
+            <!-- ROTATE INTRO -->
+            <div class="playlist-intro">
+
+                <span class="rotate-symbol">
+                    ↻
+                </span>
+
+                <h1>
+                    Rotate ur<br>
+                    phone, baby
+                </h1>
+
+                <p>
+                    this little playlist looks better sideways ♡
+                </p>
+
+            </div>
+
+            <!-- MAIN PLAYLIST -->
+            <div class="playlist-main">
+
+                <!-- SONG PLAYER -->
+                <div class="playlist-player">
+
+                    <!-- SONG LABEL -->
+                    <div class="playlist-label">
+                        A SONG FOR US
+                    </div>
+
+                    <!-- SONG TITLE -->
+                    <h1>
+                        Bergema Sampai Selamanya
+                    </h1>
+
+                    <audio id="playlistAudio" preload="metadata">
+                        <source src="bergema.mp3" type="audio/mpeg">
+                    </audio>
+
+                    <!-- ARTIST -->
+                    <p class="playlist-artist">
+                        Nadhif Basalamah
+                    </p>
+
+                    <!-- PLAY BUTTON -->
+                    <button
+                        class="playlist-play-button"
+                        type="button"
+                    >
+                        ▶
+                    </button>
+
+                    <!-- PROGRESS -->
+                    <div class="playlist-progress">
+
+                        <div
+                            class="playlist-progress-fill"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+                <!-- LYRICS -->
+                <div class="playlist-lyrics">
+
+                    <div class="lyrics-icon">
+                        ♡
+                    </div>
+
+                    <div class="lyrics-title">
+                        lyrics
+                    </div>
+
+                    <div class="lyrics-box">
+
+                        <p
+                            id="lyric-current"
+                            class="lyric-current"
+                        ></p>
+
+                    </div>
+
+                </div>
+
+                <!-- MEMORY VIDEO -->
+                <div class="playlist-memory">
+
+                    <p class="memory-label">
+                        our little memories
+                    </p>
+
+                    <div class="memory-video">
+
+                        <video
+                            id="memoryVideo"
+                            class="memory-video-player"
+                            autoplay
+                            muted
+                            playsinline
+                            preload="auto"
+                        >
+
+                            <source
+                                src="memories.mp4"
+                                type="video/mp4"
+                            >
+
+                            Your browser does not support
+                            the video tag.
+
+                        </video>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+     SCREEN 6 — GIFT
+====================================================== -->
+
+<section id="screen-gift" class="screen sub-screen gift-screen">
+
+    <!-- BACK BUTTON -->
+    <button
+        class="back-button"
+        onclick="showScreen('screen-menu')"
+    >
+        BACK ◄
+    </button>
+
+
+    <div class="sub-content">
+
+        <h1>
+            One More Thing
+        </h1>
+
+
+        <div class="gift-card">
+
+            <div class="gift-heart">
+                ♡
+            </div>
+
+
+            <div class="gift-card-label">
+                for my chibaa
+            </div>
+
+
+            <p class="gift-message">
+
+                mungkin ini semua cuma hadiah kecil,
+                tapii abgg benerann bikin semuanyaa
+                pelan-pelan, sambil belajar, satu persatu,
+                waktu demi waktu, hari demi hari. dengan kantung mata yang semakin gelap.
+
+                <br><br>
+
+                serasa mustahil, tapii abgg bisa. pelan-pelan
+                dan sendiri.
+
+                <br><br>
+
+                hadiah ituu, adaa sedikit bagian abgg
+                di dalamnyaa. semoga ucii sukaa yaaa. 🤍
+
+            </p>
+
+
+            <div class="gift-divider"></div>
+
+
+            <p class="gift-final">
+
+                <em>Your real surprise is waiting for you. ♡</em>
+
+            </p>
+
+        </div>
+          </div>
+
+</section>
+<!-- =====================================================
+     SCREEN — FINAL SURPRISE
+====================================================== -->
+
+<section id="screen-finale" class="screen finale-screen">
+
+    <div class="finale-glow"></div>
+
+    <div
+        class="finale-particles"
+        aria-hidden="true">
+    </div>
+
+
+    <!-- GIFT BOX -->
+
+    <div
+        class="finale-gift"
+        aria-hidden="true">
+
+        <div class="finale-bow">
+            <span></span>
+        </div>
+
+        <div class="finale-lid"></div>
+
+        <div class="finale-box"></div>
+
+    </div>
+
+
+    <!-- FINAL MESSAGE -->
+
+    <div class="finale-message">
+
+        <div class="finale-message-top">
+            strawberry meets matcha
+        </div>
+
+        <h1>
+            HAPPY BIRTHDAY
+        </h1>
+
+        <h2>
+            UCIII CINTAA
+        </h2>
+
+        <p>
+            made with love, by chiboo ♡
+        </p>
+
+    </div>
+
+</section>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+<script>
+(() => {
+  'use strict';
+
+  const scene = document.getElementById('scene');
+  const world = document.getElementById('world');
+  const couple = document.getElementById('couple');
+  const envelope = document.getElementById('envelope');
+  const seal = document.getElementById('seal');
+  const instruction = document.getElementById('instruction');
+  const backgroundTitle = document.getElementById('backgroundTitle');
+  const replay = document.getElementById('replay');
+  const decor = document.querySelectorAll('.decor');
+
+  let opened = false;
+  let timers = [];
+  let menuTimer = null;
+
+  const audio = document.querySelector('#song-audio, #playlistAudio, audio[data-playlist]');
+  const playButton = document.querySelector('.playlist-play-button');
+  const progress = document.querySelector('.playlist-progress-fill');
+  const progressTrack = document.querySelector('.playlist-progress');
+  const video = document.getElementById('memoryVideo');
+
+const lyricCurrent = document.getElementById('lyric-current');
+
+const playlistLyrics = [
+  {
+    time: 0.8,
+    text: "Kusampaikan dalam nyanyian...."
+  },
+  {
+    time: 4.1,
+    text: "Bergema sampai selamanya..."
+  },
+  {
+    time: 8.0,
+    text: "Dunia pasti ada akhirnya......"
+  },
+  {
+    time: 13.8,
+    text: "Bintang-bintang pun ada umurnya."
+  },
+  {
+    time: 20.5,
+    text: "Maka tenang saja kita di sini berdua..."
+  },
+  {
+    time: 26.9,
+    text: "abang & ucii"
+}
+];
+
+let currentLyricIndex = -1;
+  function later(callback, delay) {
+    const id = window.setTimeout(callback, delay);
+    timers.push(id);
+    return id;
+  }
+
+  function clearTimers() {
+    timers.forEach(window.clearTimeout);
+    timers = [];
+    if (menuTimer !== null) {
+      window.clearTimeout(menuTimer);
+      menuTimer = null;
+    }
+  }
+
+  function pausePlaylist() {
+    if (audio) audio.pause();
+    if (video) video.pause();
+  }
+
+  /* =========================================================
+     MENU CARD — 3D ENTRANCE
+     Uses Web Animations API so existing card hover/press CSS
+     remains untouched. If the API is unavailable, cards stay
+     visible normally (safe fallback).
+  ========================================================= */
+
+  window.__chibooMenu3DAnimations = [];
+
+  function clearMenu3D() {
+    const animations = window.__chibooMenu3DAnimations;
+    if (!Array.isArray(animations)) {
+      window.__chibooMenu3DAnimations = [];
+      return;
+    }
+
+    animations.forEach(animation => {
+      try {
+        animation.cancel();
+      } catch (_) {
+        /* Ignore an already-finished animation. */
+      }
+    });
+
+    window.__chibooMenu3DAnimations = [];
+  }
+
+  function triggerMenu3D() {
+    const menuScreen = document.getElementById('screen-menu');
+    if (!menuScreen) return;
+
+    clearMenu3D();
+
+    // Respect accessibility preferences: leave the normal card styling intact.
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    // Safe fallback for browsers without Web Animations API.
+    if (typeof Element === 'undefined' ||
+        typeof Element.prototype.animate !== 'function') {
+      return;
+    }
+
+    const cards = Array.from(menuScreen.querySelectorAll('.menu-card'));
+    if (!cards.length) return;
+
+    const origins = [
+      { x: -120, y: -80, rx: 30, ry: -28 },
+      { x:  120, y: -80, rx: 30, ry:  28 },
+      { x: -120, y:  80, rx: -30, ry: -28 },
+      { x:  120, y:  80, rx: -30, ry:  28 }
+    ];
+
+    cards.forEach((card, index) => {
+      const origin = origins[index] || { x: 0, y: 70, rx: -18, ry: 0 };
+      const baseTransform = getComputedStyle(card).transform;
+      const finalTransform =
+        baseTransform === 'none'
+          ? 'translate3d(0, 0, 0)'
+          : baseTransform;
+
+      const animation = card.animate(
+        [
+          {
+            opacity: 0,
+            transform:
+              `translate3d(${origin.x}px, ${origin.y}px, -180px) ` +
+              `rotateX(${origin.rx}deg) rotateY(${origin.ry}deg) scale(.86)`
+          },
+          {
+            opacity: 1,
+            transform:
+              `translate3d(0, 0, 22px) ` +
+              `rotateX(${origin.rx > 0 ? 2 : -2}deg) ` +
+              `rotateY(${origin.ry > 0 ? 2 : -2}deg) scale(1.025)`,
+            offset: 0.72
+          },
+          {
+            opacity: 1,
+            transform: finalTransform
+          }
+        ],
+        {
+          duration: 680,
+          delay: 100 * index,
+          easing: 'cubic-bezier(.17,.84,.34,1.08)',
+          fill: 'none'
+        }
+      );
+
+      window.__chibooMenu3DAnimations.push(animation);
+    });
+
+    // Keep the cleanup list small after the staggered entrance completes.
+    const cleanupDelay = 680 + 100 * Math.max(cards.length - 1, 0) + 50;
+    window.setTimeout(() => {
+      if (Array.isArray(window.__chibooMenu3DAnimations)) {
+        window.__chibooMenu3DAnimations = [];
+      }
+    }, cleanupDelay);
+  }
+
+  function startPlaylist() {
+    if (audio) audio.play().catch(() => {});
+    if (video) video.play().catch(() => {});
+  }
+
+function showScreen(screenId) {
+    clearTimers();
+    pausePlaylist();
+    clearMenu3D();
+
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+
+    const target = document.getElementById(screenId);
+
+    if (!target) return;
+
+    target.classList.add('active');
+
+    if (scene) {
+        scene.classList.add('scene-hidden');
+    }
+
+
+    if (screenId === 'screen-playlist') {
+        startPlaylist();
+    }
+
+
+    if (screenId === 'screen-menu') {
+        triggerMenu3D();
+    }
+
+
+    if (screenId === 'screen-finale') {
+        startFinale();
+    }
+}
+
+window.showScreen = showScreen;
+
+  function startOpening() {
+    clearTimers();
+    pausePlaylist();
+    opened = false;
+
+    document.querySelectorAll('.screen').forEach(screen => {
+      screen.classList.remove('active');
+    });
+
+    if (!scene) return;
+
+    scene.classList.remove('scene-hidden', 'opened', 'to-menu');
+
+    if (world) world.classList.remove('camera-arrive');
+    if (couple) couple.classList.remove('travel', 'rest');
+    if (envelope) envelope.classList.remove('arrive');
+    if (seal) seal.classList.remove('pop');
+    if (instruction) instruction.classList.remove('show');
+    if (backgroundTitle) backgroundTitle.classList.remove('show');
+    decor.forEach(item => item.classList.remove('visible'));
+
+    if (world) {
+      world.style.removeProperty('--parallax-x');
+      world.style.removeProperty('--parallax-y');
+      world.style.removeProperty('transform');
+    }
+
+    // Force a reflow so CSS animations can start again after replay.
+    void scene.offsetWidth;
+
+    if (world) world.classList.add('camera-arrive');
+    if (couple) couple.classList.add('travel');
+
+    later(() => backgroundTitle?.classList.add('show'), 400);
+    later(() => decor.forEach(item => item.classList.add('visible')), 1000);
+    later(() => envelope?.classList.add('arrive'), 700);
+    later(() => seal?.classList.add('pop'), 3200);
+    later(() => instruction?.classList.add('show'), 4000);
+  }
+
+  
+function startLoveLoading() {
+    const loading = document.getElementById('loveLoading');
+    const progress = document.getElementById('loadingProgress');
+    const track = document.getElementById('loadingTrack');
+    const couple = document.getElementById('loadingCouple');
+
+    if (!loading || !progress || !track || !couple) {
+        showScreen('screen-menu');
+        return;
+    }
+
+    loading.classList.add('active');
+    loading.setAttribute('aria-hidden', 'false');
+
+    const duration = 1800;
+    const start = performance.now();
+    const maxTravel = Math.max(
+        0,
+        loading.clientWidth - couple.offsetWidth - 48
+    );
+
+    function animate(now) {
+        const elapsed = now - start;
+        const ratio = Math.min(elapsed / duration, 1);
+        const percentage = Math.round(ratio * 100);
+
+        progress.style.width = percentage + '%';
+        track.setAttribute('aria-valuenow', percentage);
+
+        couple.style.left = (maxTravel * ratio) + 'px';
+
+        if (ratio < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            loading.classList.remove('active');
+            loading.setAttribute('aria-hidden', 'true');
+
+            showScreen('screen-menu');
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+  /* =========================================================
+   FINAL SURPRISE — GIFT BOX BURST
+========================================================= */
+
+let finaleTimers = [];
+
+
+function clearFinaleTimers() {
+
+    finaleTimers.forEach(timer => {
+        clearTimeout(timer);
+    });
+
+    finaleTimers = [];
+}
+
+
+function createFinaleParticles() {
+
+    const container =
+        document.querySelector(
+            '#screen-finale .finale-particles'
+        );
+
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const symbols = [
+        '♥',
+        '♡',
+        '✦',
+        '✧',
+        '❀',
+        '✿',
+        '✿',
+        '·'
+    ];
+
+    const colors = [
+        '#b94f6d',
+        '#d97994',
+        '#8fa875',
+        '#a9bc8d',
+        '#e4a7b7',
+        '#c98b9c'
+    ];
+
+    const total = 76;
+
+    for (let i = 0; i < total; i++) {
+
+        const particle =
+            document.createElement('span');
+
+        particle.className =
+            'finale-particle';
+
+        particle.textContent =
+            symbols[
+                Math.floor(
+                    Math.random() *
+                    symbols.length
+                )
+            ];
+
+        const angle =
+            Math.random() *
+            Math.PI *
+            2;
+
+        const distance =
+            150 +
+            Math.random() * 330;
+
+        const x =
+            Math.cos(angle) *
+            distance;
+
+        const y =
+            Math.sin(angle) *
+            distance;
+
+        const size =
+            0.55 +
+            Math.random() * 1.15;
+
+        const duration =
+            2.1 +
+            Math.random() * 1.8;
+
+        const delay =
+            Math.random() * 0.32;
+
+        const rotate =
+            -360 +
+            Math.random() * 720;
+
+        const color =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
+            ];
+
+        particle.style.setProperty(
+            '--x',
+            `${x}px`
+        );
+
+        particle.style.setProperty(
+            '--y',
+            `${y}px`
+        );
+
+        particle.style.setProperty(
+            '--size',
+            `${size}rem`
+        );
+
+        particle.style.setProperty(
+            '--duration',
+            `${duration}s`
+        );
+
+        particle.style.setProperty(
+            '--delay',
+            `${delay}s`
+        );
+
+        particle.style.setProperty(
+            '--rotate',
+            `${rotate}deg`
+        );
+
+        particle.style.setProperty(
+            '--color',
+            color
+        );
+
+        container.appendChild(particle);
+    }
+  }
+
+
+function startFinale() {
+
+    clearFinaleTimers();
+
+    const finale =
+        document.getElementById(
+            'screen-finale'
+        );
+
+    if (!finale) return;
+
+    finale.classList.remove(
+        'is-ready',
+        'is-burst',
+        'is-message'
+    );
+
+    const particles =
+        finale.querySelector(
+            '.finale-particles'
+        );
+
+    if (particles) {
+        particles.innerHTML = '';
+    }
+
+
+    /* =========================
+       0.6s — GIFT MUNCUL
+    ========================= */
+
+    finaleTimers.push(
+        setTimeout(() => {
+
+            finale.classList.add(
+                'is-ready'
+            );
+
+        }, 600)
+    );
+
+
+    /* =========================
+       1.8s — GIFT MULAI BERGETAR
+    ========================= */
+
+    finaleTimers.push(
+        setTimeout(() => {
+
+            finale.classList.add(
+                'is-preburst'
+            );
+
+        }, 1800)
+    );
+
+
+    /* =========================
+       3.2s — DUARRRR
+    ========================= */
+
+    finaleTimers.push(
+        setTimeout(() => {
+
+            createFinaleParticles();
+
+            finale.classList.add(
+                'is-burst'
+            );
+
+        }, 3200)
+    );
+
+
+    /* =========================
+       5.4s — HAPPY BIRTHDAY
+    ========================= */
+
+    finaleTimers.push(
+        setTimeout(() => {
+
+            finale.classList.add(
+                'is-message'
+            );
+
+        }, 5400)
+    );
+
+    }
+function openEnvelope() {
+    if (!scene || !envelope) return;
+
+    if (!opened) {
+        opened = true;
+        clearTimers();
+        scene.classList.add('opened');
+        return;
+    }
+
+    clearTimers();
+    scene.classList.add('to-menu');
+
+    menuTimer = window.setTimeout(() => {
+        startLoveLoading();
+    }, 750);
+}
+
+
+  window.openEnvelope = openEnvelope;
+
+  envelope?.addEventListener('click', openEnvelope);
+  envelope?.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openEnvelope();
+    }
+  });
+
+  replay?.addEventListener('click', startOpening);
+
+  scene?.addEventListener('pointermove', event => {
+    if (opened || !world) return;
+    const rect = scene.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    world.style.setProperty('--parallax-x', `${x * -12}px`);
+    world.style.setProperty('--parallax-y', `${y * -12}px`);
+  });
+
+  scene?.addEventListener('pointerleave', () => {
+    world?.style.removeProperty('--parallax-x');
+    world?.style.removeProperty('--parallax-y');
+  });
+
+  playButton?.addEventListener('click', () => {
+    if (!audio) return;
+    if (audio.paused) audio.play().catch(() => {});
+    else audio.pause();
+  });
+
+  audio?.addEventListener('play', () => {
+    if (playButton) playButton.textContent = 'Ⅱ';
+  });
+
+  audio?.addEventListener('pause', () => {
+    if (playButton) playButton.textContent = '▶';
+  });
+
+  audio?.addEventListener('timeupdate', () => {
+  if (progress && Number.isFinite(audio.duration) && audio.duration > 0) {
+    progress.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+  }
+
+  if (lyricCurrent) {
+    let newIndex = -1;
+
+    for (let i = 0; i < playlistLyrics.length; i++) {
+      if (audio.currentTime >= playlistLyrics[i].time) {
+        newIndex = i;
+      } else {
+        break;
+      }
+    }
+
+    if (newIndex !== currentLyricIndex) {
+      currentLyricIndex = newIndex;
+      lyricCurrent.textContent =
+        newIndex >= 0 ? playlistLyrics[newIndex].text : '';
+    }
+  }
+});
+  audio?.addEventListener('ended', () => {
+  currentLyricIndex = -1;
+  if (lyricCurrent) lyricCurrent.textContent = '';
+});
+
+  progressTrack?.addEventListener('click', event => {
+    if (!audio || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
+    const rect = progressTrack.getBoundingClientRect();
+    if (!rect.width) return;
+    const ratio = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+    audio.currentTime = ratio * audio.duration;
+  });
+
+  document.querySelectorAll('.polaroid').forEach(card => {
+    let hold = null;
+
+    const clearHold = () => {
+      if (hold !== null) {
+        window.clearTimeout(hold);
+        hold = null;
+      }
+    };
+
+    const showToast = () => {
+      let toast = document.querySelector('.polaroid-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'polaroid-toast';
+        toast.textContent = 'A little piece of our story ♡';
+        document.body.appendChild(toast);
+      }
+      toast.classList.add('visible');
+      window.setTimeout(() => toast.classList.remove('visible'), 1800);
+    };
+
+    card.addEventListener('pointerdown', () => {
+      clearHold();
+      hold = window.setTimeout(showToast, 600);
+    });
+
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(type => {
+      card.addEventListener(type, clearHold);
+    });
+  });
+  /* =======================================================
+     MOMENT AUDIO — PLAY NOTIFICATION
+     Manual play only.
+     Toast appears once per audio.
+     Does not touch Journey toast.
+     ======================================================= */
+
+  (() => {
+    const momentAudios = document.querySelectorAll(
+      '#screen-moment audio[data-moment-audio]'
+    );
+
+    if (!momentAudios.length) return;
+
+    const playedNotice = new WeakSet();
+
+    const showMomentLoveToast = () => {
+      let toast = document.querySelector('.moment-love-toast');
+
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'moment-love-toast';
+        toast.textContent = 'wopyuu ucii 😘';
+        document.body.appendChild(toast);
+      }
+
+      toast.classList.remove('show');
+
+      // Force the browser to register the reset before showing again.
+      void toast.offsetWidth;
+
+      toast.classList.add('show');
+
+      window.clearTimeout(toast._hideTimer);
+
+      toast._hideTimer = window.setTimeout(() => {
+        toast.classList.remove('show');
+      }, 1800);
+    };
+
+    momentAudios.forEach(audio => {
+
+      audio.addEventListener('play', () => {
+
+        if (playedNotice.has(audio)) return;
+
+        playedNotice.add(audio);
+        showMomentLoveToast();
+
+      });
+
+    });
+
+  })();
+  // Start directly on the cinematic opening.
+  startOpening();
+})();
+</script>
+</body>
+</html>
